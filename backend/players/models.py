@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db import models
 from uuid7 import uuid7
 
-from .managers import PlayerManager
+from players.managers import PlayerManager
 
 
 class Player(AbstractBaseUser, PermissionsMixin):

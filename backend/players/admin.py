@@ -1,5 +1,5 @@
 from django.contrib import admin
 
-from .models import Player
+from players.models import Player
 
 admin.site.register(Player)
