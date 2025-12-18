@@ -110,10 +110,6 @@ SPECTACULAR_SETTINGS = {
 DRF_TO_MKDOC = {
     "DJANGO_APPS": [
         "players",
-        "pokemon",
-        "battles",
-        "scoreboard",
-        "logs",
     ],
     "DOCS_DIR": "docs",
 }
