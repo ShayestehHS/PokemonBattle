@@ -1,11 +1,7 @@
-"""
-Django settings for Pokemon Battle API project.
-"""
-
 import os
 from pathlib import Path
+from datetime import timedelta
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -17,16 +13,10 @@ def read_secret(secret_name: str, default: str = '') -> str:
     return os.environ.get(secret_name.upper().replace('-', '_'), default)
 
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = read_secret('django_secret_key', 'django-insecure-dev-key-change-in-production')
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'false').lower() in ('true', '1', 'yes')
-
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.auth',
@@ -41,10 +31,6 @@ INSTALLED_APPS = [
     'drf_to_mkdoc',
     # Local apps
     'players',
-    'pokemon',
-    'battles',
-    'scoreboard',
-    'logs',
 ]
 
 MIDDLEWARE = [
@@ -58,49 +44,21 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
-
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
-
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-DATABASE_URL = os.environ.get('DATABASE_URL')
-if DATABASE_URL:
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.parse(DATABASE_URL)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('POSTGRES_DB', 'pokemon_battle'),
+        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+        'PASSWORD': read_secret('db_password', 'postgres'),
+        'HOST': os.environ.get('POSTGRES_HOST', 'postgres'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
-else:
-    DB_PASSWORD = read_secret('db_password', 'postgres')
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('POSTGRES_DB', 'pokemon_battle'),
-            'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-            'PASSWORD': DB_PASSWORD,
-            'HOST': os.environ.get('POSTGRES_HOST', 'postgres'),
-            'PORT': os.environ.get('POSTGRES_PORT', '5432'),
-        }
-    }
+}
+REDIS_URL = os.environ.get('REDIS_URL', 'redis://redis:6379/0')
 
 
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -109,27 +67,19 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Custom User Model
 AUTH_USER_MODEL = 'players.Player'
-
-
-# Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
-# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -139,12 +89,9 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'drf_to_mkdoc.openapi.AutoSchema',
 }
 
-
-# Simple JWT Settings
-from datetime import timedelta
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
@@ -154,16 +101,12 @@ SIMPLE_JWT = {
 }
 
 
-# DRF Spectacular Settings
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Pokemon Battle API',
     'DESCRIPTION': 'A turn-based Pokemon battle simulation API',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
-
-
-# DRF to MkDoc Settings
 DRF_TO_MKDOC = {
     'DJANGO_APPS': [
         'players',
@@ -175,12 +118,6 @@ DRF_TO_MKDOC = {
     'DOCS_DIR': 'docs',
 }
 
-
-# Redis Configuration
-REDIS_URL = os.environ.get('REDIS_URL', 'redis://redis:6379/0')
-
-
-# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -208,4 +145,3 @@ LOGGING = {
         },
     },
 }
-
