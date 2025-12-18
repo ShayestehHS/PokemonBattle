@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "drf_to_mkdoc",
     # Local apps
     "players",
+    "pokemon",
 ]
 
 MIDDLEWARE = [
@@ -126,6 +127,7 @@ SPECTACULAR_SETTINGS = {
 DRF_TO_MKDOC = {
     "DJANGO_APPS": [
         "players",
+        "pokemon",
     ],
     "DOCS_DIR": "docs",
 }
