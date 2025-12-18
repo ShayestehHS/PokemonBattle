@@ -67,5 +67,7 @@ omit = ["*/migrations/*", "*/tests/*", "manage.py", "conftest.py"]
 [dependency-groups]
 dev = [
     "pre-commit>=4.5.1",
+    "pytest>=9.0.2",
+    "pytest-django>=4.11.1",
     "ruff>=0.14.9",
 ]
