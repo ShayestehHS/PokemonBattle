@@ -1,0 +1,80 @@
+# docker-compose.yml (at project root)
+version: '3.8'
+
+networks:
+  frontend-network:
+    driver: bridge
+  backend-network:
+    driver: bridge
+    internal: true  # No external access - DB isolated from outside
+
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    networks:
+      - frontend-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  backend:
+    build: ./backend
+    environment:
+      - DEBUG=${DEBUG:-false}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=pokemon_battle
+      - POSTGRES_USER=postgres
+      - REDIS_URL=redis://redis:6379/0
+    networks:
+      - frontend-network
+      - backend-network
+    secrets:
+      - django_secret_key
+      - db_password
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17
+    environment:
+      - POSTGRES_DB=pokemon_battle
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend-network  # Only accessible by backend (not nginx)
+    secrets:
+      - db_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d pokemon_battle"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    networks:
+      - backend-network
+    restart: unless-stopped
+
+secrets:
+  django_secret_key:
+    file: ./secrets/django_secret_key.txt
+  db_password:
+    file: ./secrets/db_password.txt
+
+volumes:
+  postgres_data:
+  redis_data:
+

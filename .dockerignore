@@ -1,0 +1,58 @@
+# Git
+.git
+.gitignore
+
+# Documentation
+README.md
+docs/
+site/
+*.md
+
+# IDE
+.idea/
+.vscode/
+.cursor/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+.pytest_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Testing
+.coverage
+htmlcov/
+.tox/
+tests/
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.docker/
+.dockerignore
+
+# Secrets (handled by Docker secrets, not COPY)
+secrets/
+
+# Environment files
+.env
+.env.*
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
