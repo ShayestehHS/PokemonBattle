@@ -59,3 +59,8 @@ addopts = "-v --tb=short"
 source = ["."]
 omit = ["*/migrations/*", "*/tests/*", "manage.py", "conftest.py"]
 
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.1",
+    "ruff>=0.14.9",
+]
