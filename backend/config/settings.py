@@ -2,6 +2,8 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
+from django.db.models import Model
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
