@@ -52,7 +52,7 @@ DATABASES = {
         "NAME": os.environ.get("POSTGRES_DB", "pokemon_battle"),
         "USER": os.environ.get("POSTGRES_USER", "postgres"),
         "PASSWORD": read_secret("db_password", "postgres"),
-        "HOST": os.environ.get("POSTGRES_HOST", "postgres"),
+        "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
         "PORT": os.environ.get("POSTGRES_PORT", "5432"),
     }
 }
