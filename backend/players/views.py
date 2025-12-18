@@ -15,18 +15,25 @@ class AuthViewSet(CreateModelMixin, GenericViewSet):
     permission_classes = [AllowAny]
     authentication_classes = []
 
-    @action(detail=False, methods=["post"], serializer_class=RegisterSerializer)
+    def get_serializer_class(self):
+        if self.action == "login":
+            return LoginSerializer
+        if self.action == "refresh":
+            return TokenRefreshSerializer
+        return RegisterSerializer
+
+    @action(detail=False, methods=["post"])
     def register(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
-    @action(detail=False, methods=["post"], serializer_class=LoginSerializer)
+    @action(detail=False, methods=["post"])
     def login(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         player = serializer.save()
         return Response(serializer.to_representation(player), status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["post"], serializer_class=TokenRefreshSerializer)
+    @action(detail=False, methods=["post"])
     def refresh(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         try:

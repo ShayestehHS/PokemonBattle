@@ -60,8 +60,8 @@ secrets/
 
 # Generated docs (built by CI)
 site/
-backend/docs/api/
 backend/docs/models/
+backend/docs/model-docs.json
 
 # OS
 .DS_Store
