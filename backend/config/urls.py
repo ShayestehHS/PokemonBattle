@@ -2,8 +2,8 @@ from django.conf import settings
 from django.urls import include, path, re_path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-urlpatterns = [
-    path("api/", include("players.urls", namespace="players")),
+base_urlpatterns = [
+    path("players/", include("players.urls", namespace="players")),
 ]
 
 if settings.DEBUG:
@@ -20,13 +20,14 @@ if settings.DEBUG:
 
         return serve(request, path, document_root=document_root)
 
-    urlpatterns += [
-        path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
-        path("api/docs/swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
-        re_path(r"^api/docs/(?P<path>.*)$", serve_mkdocs, name="mkdocs"),
-        re_path(
-            r"^static/(?P<path>.*)$",
-            serve,
-            {"document_root": settings.STATIC_ROOT},
-        ),
+    base_urlpatterns += [
+        path("schema/", SpectacularAPIView.as_view(), name="schema"),
+        re_path(r"^docs/(?P<path>.*)$", serve_mkdocs, name="mkdocs"),
+        re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
+        # Swagger doc as fallback of the drf-to-mkdoc plugin
+        path("docs/swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     ]
+
+urlpatterns = [
+    path("api/", include(base_urlpatterns)),
+]

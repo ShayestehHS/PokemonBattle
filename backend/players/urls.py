@@ -11,5 +11,5 @@ router.register("auth", AuthViewSet, basename="auth")
 urlpatterns = [
     path("", include(router.urls)),
     # Player endpoints
-    path("players/me/", PlayerMeView.as_view(), name="player-me"),
+    path("me/", PlayerMeView.as_view(), name="me"),
 ]
