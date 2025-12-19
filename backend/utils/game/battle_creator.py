@@ -6,7 +6,7 @@ from uuid import UUID
 
 from battles.models import Battle
 from players.models import Player
-from pokemon.models import PlayerPokemon
+from pokemon.models import PlayerPokemon, Pokemon
 from utils.game.exceptions import (
     NoOpponentAvailableException,
     NoPokemonException,
@@ -72,8 +72,39 @@ class BattleCreator:
     def _get_random_opponent(self) -> Player:
         opponents = Player.objects.exclude(id=self.user.id).filter(active_pokemon__isnull=False)
         if not opponents.exists():
-            raise NoOpponentAvailableException()
+            # Create an AI opponent if none exist
+            return self._create_ai_opponent()
         return random.choice(list(opponents))
+
+    def _create_ai_opponent(self) -> Player:
+        """Create an AI opponent player with a random Pokemon."""
+        # Get a random Pokemon from the database
+        pokemon_count = Pokemon.objects.count()
+        if pokemon_count == 0:
+            raise NoOpponentAvailableException("No Pokemon available in database. Please seed Pokemon first.")
+
+        # Get a random Pokemon
+        random_pokemon = Pokemon.objects.order_by("?").first()
+
+        # Create AI opponent player
+        ai_opponent, created = Player.objects.get_or_create(
+            username="AI Trainer",
+            defaults={
+                "is_active": True,
+            },
+        )
+
+        # If player already exists but has no active pokemon, create one
+        if not ai_opponent.active_pokemon:
+            # Check if this player already has this pokemon
+            player_pokemon, _ = PlayerPokemon.objects.get_or_create(
+                player=ai_opponent,
+                pokemon=random_pokemon,
+            )
+            ai_opponent.active_pokemon = player_pokemon
+            ai_opponent.save()
+
+        return ai_opponent
 
     def _get_opponent_pokemon(self, opponent: Player) -> PlayerPokemon:
         if not opponent.active_pokemon:

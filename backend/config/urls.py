@@ -6,6 +6,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 base_urlpatterns = [
     path("players/", include("players.urls", namespace="players")),
     path("pokemon/", include("pokemon.urls", namespace="pokemon")),
+    path("battles/", include("battles.urls", namespace="battles")),
     path("health/", lambda request: JsonResponse({"status": "ok"}), name="health"),
 ]
 

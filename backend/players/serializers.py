@@ -10,7 +10,7 @@ from pokemon.serializers import PokemonDetailSerializer
 
 class PlayerSerializer(serializers.ModelSerializer):
     win_rate = serializers.SerializerMethodField()
-    active_pokemon = PokemonDetailSerializer(default=None)
+    active_pokemon = PokemonDetailSerializer(source="active_pokemon.pokemon", default=None)
 
     class Meta:
         model = Player

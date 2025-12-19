@@ -14,7 +14,7 @@ def read_secret(secret_name: str, default: str = "") -> str:
 
 
 SECRET_KEY = read_secret("django_secret_key", "django-insecure-dev-key-change-in-production")
-DEBUG = os.environ.get("DEBUG", "false").lower() in ("true", "1", "yes")
+DEBUG = os.environ.get("DEBUG", "true").lower() in ("true", "1", "yes")
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 
@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     # Local apps
     "players.apps.PlayersConfig",
     "pokemon.apps.PokemonConfig",
+    "battles.apps.BattlesConfig",
 ]
 
 MIDDLEWARE = [
@@ -123,6 +124,7 @@ REST_FRAMEWORK = {
         "pokeapi": "60/min",
     },
     "DEFAULT_SCHEMA_CLASS": "drf_to_mkdoc.utils.schema.AutoSchema",
+    "EXCEPTION_HANDLER": "utils.exception_handler.exception_handler",
 }
 
 

@@ -57,6 +57,25 @@ class PokemonListSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
+class PlayerPokemonListSerializer(serializers.ModelSerializer):
+    primary_type_name = serializers.CharField(source="primary_type.name")
+    secondary_type_name = serializers.CharField(source="secondary_type.name", allow_null=True)
+    player_pokemon_id = serializers.UUIDField(read_only=True)
+
+    class Meta:
+        model = Pokemon
+        fields = [
+            "id",
+            "pokedex_number",
+            "name",
+            "sprite_url",
+            "primary_type_name",
+            "secondary_type_name",
+            "player_pokemon_id",
+        ]
+        read_only_fields = fields
+
+
 class PokemonDetailSerializer(serializers.ModelSerializer):
     primary_type = PokemonTypeSerializer(read_only=True)
     secondary_type = PokemonTypeSerializer(read_only=True)

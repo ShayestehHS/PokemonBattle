@@ -14,6 +14,7 @@ from pokemon.filters import PokemonFilter, TypeEffectivenessFilter
 from pokemon.models import PlayerPokemon, Pokemon, PokemonType, TypeEffectiveness
 from pokemon.serializers import (
     PlayerPokemonCreateSerializer,
+    PlayerPokemonListSerializer,
     PokeAPIPokemonSerializer,
     PokemonDetailSerializer,
     PokemonListSerializer,
@@ -222,6 +223,8 @@ class PokemonMeViewSet(ListModelMixin, CreateModelMixin, DestroyModelMixin, Gene
     def get_serializer_class(self):
         if self.action == "create":
             return PlayerPokemonCreateSerializer
+        if self.action == "list":
+            return PlayerPokemonListSerializer
         return PokemonListSerializer
 
     def list(self, request, *args, **kwargs):
