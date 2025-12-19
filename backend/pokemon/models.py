@@ -1,6 +1,8 @@
 from django.db import models
 from uuid_extensions import uuid7
 
+from pokemon.managers import PokemonManager
+
 
 class PokemonType(models.Model):
     id = models.UUIDField(
@@ -93,6 +95,8 @@ class Pokemon(models.Model):
         help_text="Secondary Pokemon type (optional)",
     )
     created_at = models.DateTimeField(auto_now_add=True, help_text="When this Pokemon was added to the database")
+
+    objects = PokemonManager()
 
     class Meta:
         db_table = "pokemon"
