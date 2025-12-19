@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 
 from django.db import models
 
-from pokemon.models import PokemonType
 from utils.cache import CACHE_PREFIX_POKEMON, invalidate_cache_prefix
 
 if TYPE_CHECKING:
@@ -26,6 +25,8 @@ class PokemonManager(models.Manager):
         Returns:
             List of created Pokemon instances
         """
+        from pokemon.models import PokemonType
+
         if not pokedex_numbers:
             return []
 
