@@ -31,8 +31,8 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "drf_to_mkdoc",
     # Local apps
-    "players",
-    "pokemon",
+    "players.apps.PlayersConfig",
+    "pokemon.apps.PokemonConfig",
 ]
 
 MIDDLEWARE = [
