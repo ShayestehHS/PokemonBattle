@@ -1,16 +1,19 @@
 import logging
 
+from django.db.models import OuterRef, Subquery
 from django.utils.decorators import method_decorator
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.generics import ListAPIView
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, ListModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
+from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet, ViewSet
 
 from pokemon.filters import PokemonFilter, TypeEffectivenessFilter
-from pokemon.models import Pokemon, PokemonType, TypeEffectiveness
+from pokemon.models import PlayerPokemon, Pokemon, PokemonType, TypeEffectiveness
 from pokemon.serializers import (
+    PlayerPokemonCreateSerializer,
     PokeAPIPokemonSerializer,
     PokemonDetailSerializer,
     PokemonListSerializer,
@@ -66,7 +69,20 @@ class PokemonViewSet(ReadOnlyModelViewSet):
         return PokemonListSerializer
 
     def get_queryset(self):
-        return Pokemon.objects.select_related("primary_type", "secondary_type").order_by("pokedex_number")
+        queryset = Pokemon.objects.select_related("primary_type", "secondary_type").order_by("pokedex_number")
+        if self.action == "starters":
+            # Use subquery to get one Pokemon per primary type (SQLite compatible)
+            from django.db.models import Min, OuterRef, Subquery
+
+            min_pokedex_per_type = (
+                Pokemon.objects.filter(primary_type_id=OuterRef("primary_type_id"))
+                .values("primary_type_id")
+                .annotate(min_pokedex=Min("pokedex_number"))
+                .values("min_pokedex")[:1]
+            )
+            queryset = queryset.filter(pokedex_number=Subquery(min_pokedex_per_type)).order_by("primary_type_id")
+
+        return queryset
 
     @method_decorator(cache_page_with_prefix(CACHE_PREFIX_POKEMON))
     def list(self, request, *args, **kwargs):
@@ -75,6 +91,11 @@ class PokemonViewSet(ReadOnlyModelViewSet):
     @method_decorator(cache_page_with_prefix(CACHE_PREFIX_POKEMON))
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
+
+    @method_decorator(cache_page_with_prefix(CACHE_PREFIX_POKEMON))
+    @action(detail=False, methods=["get"], url_path="starters")
+    def starters(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class PokeAPIViewSet(ViewSet):
@@ -90,16 +111,47 @@ class PokeAPIViewSet(ViewSet):
         # Try to parse as integer (Pokedex number)
         try:
             pokedex_number = int(query)
-            pokemon = client.get_pokemon(pokedex_number)
+            pokemon_data = client.get_pokemon(pokedex_number)
         except ValueError:
             # Search by name
-            pokemon = client.get_pokemon_by_name(query)
+            pokemon_data = client.get_pokemon_by_name(query)
 
-        if not pokemon:
-            return Response([])
+        if not pokemon_data:
+            return Response({"data": None})
+
+        # Create or get Pokemon instance from API data
+        from pokemon.models import PokemonType
+
+        # Get or create types
+        type_names = pokemon_data.get("types", [])
+        primary_type_name = type_names[0] if type_names else None
+        secondary_type_name = type_names[1] if len(type_names) > 1 else None
+
+        primary_type = None
+        if primary_type_name:
+            primary_type, _ = PokemonType.objects.get_or_create(name=primary_type_name)
+
+        secondary_type = None
+        if secondary_type_name:
+            secondary_type, _ = PokemonType.objects.get_or_create(name=secondary_type_name)
+
+        # Get or create Pokemon instance
+        pokemon, _ = Pokemon.objects.get_or_create(
+            pokedex_number=pokemon_data["pokedex_number"],
+            defaults={
+                "name": pokemon_data["name"],
+                "sprite_url": pokemon_data.get("sprite_url", "") or "",
+                "base_hp": pokemon_data["stats"]["hp"],
+                "base_attack": pokemon_data["stats"]["attack"],
+                "base_defense": pokemon_data["stats"]["defense"],
+                "base_speed": pokemon_data["stats"]["speed"],
+                "primary_type": primary_type,
+                "secondary_type": secondary_type,
+            },
+        )
 
         serializer = PokeAPIPokemonSerializer(pokemon)
-        return Response(serializer.data)
+        return Response({"data": serializer.data})
 
     @action(detail=False, methods=["get"])
     def list_pokemon(self, request):
@@ -150,3 +202,33 @@ class PokeAPIViewSet(ViewSet):
 
         serializer = PokemonListSerializer(pokemon_list, many=True)
         return Response(serializer.data)
+
+
+class PokemonMeViewSet(ListModelMixin, CreateModelMixin, DestroyModelMixin, GenericViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PokemonListSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        # Use subquery to get PlayerPokemon.id for ordering by most recent first
+        player_pokemon_subquery = PlayerPokemon.objects.filter(player=user, pokemon=OuterRef("pk")).values("id")[:1]
+
+        return (
+            user.pokemons.select_related("primary_type", "secondary_type")
+            .annotate(player_pokemon_id=Subquery(player_pokemon_subquery))
+            .order_by("-player_pokemon_id")
+        )
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return PlayerPokemonCreateSerializer
+        return PokemonListSerializer
+
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(player=self.request.user)

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from pokemon.models import Pokemon, PokemonType, TypeEffectiveness
+from pokemon.models import PlayerPokemon, Pokemon, PokemonType, TypeEffectiveness
 
 
 class PokeAPIPokemonSerializer(serializers.ModelSerializer):
@@ -77,3 +77,29 @@ class PokemonDetailSerializer(serializers.ModelSerializer):
             "created_at",
         ]
         read_only_fields = fields
+
+
+class PlayerPokemonCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlayerPokemon
+        fields = ["pokemon"]
+        read_only_fields = ["player"]
+
+    def validate_pokemon(self, value):
+        if PlayerPokemon.with_trash.filter(player=self.context["request"].user, pokemon=value).exists():
+            raise serializers.ValidationError("You already own this pokemon.")
+        return value
+
+    def validate(self, attrs):
+        user = self.context["request"].user
+        current_pokemon_count = PlayerPokemon.objects.filter(player=user).count()
+
+        if current_pokemon_count >= 1 and user.wins <= current_pokemon_count:
+            raise serializers.ValidationError(
+                f"You can only have up to {user.wins} pokemon (based on your wins). You currently have {current_pokemon_count} pokemon."
+            )
+
+        return attrs
+
+    def to_representation(self, instance):
+        return PokemonListSerializer(instance.pokemon).data
