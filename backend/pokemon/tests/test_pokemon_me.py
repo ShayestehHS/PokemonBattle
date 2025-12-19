@@ -111,7 +111,7 @@ class TestPokemonMeCreatePOST:
 
     def test_create_my_pokemon_with_valid_data_returns_201(self):
         self.client.force_authenticate(user=self.player)
-        data = {"pokemon": str(self.charmander.id)}
+        data = {"pokemon_id": str(self.charmander.id)}
 
         response = self.client.post(self.url, data=data)
         json_response = response.json()
@@ -130,7 +130,7 @@ class TestPokemonMeCreatePOST:
         assert PlayerPokemon.objects.filter(player=self.player, pokemon=self.charmander).exists()
 
     def test_create_my_pokemon_without_authentication_returns_401(self):
-        data = {"pokemon": str(self.charmander.id)}
+        data = {"pokemon_id": str(self.charmander.id)}
 
         response = self.client.post(self.url, data=data)
         json_response = response.json()
@@ -143,30 +143,30 @@ class TestPokemonMeCreatePOST:
         from uuid_extensions import uuid7
 
         nonexistent_id = uuid7()
-        data = {"pokemon": str(nonexistent_id)}
+        data = {"pokemon_id": str(nonexistent_id)}
 
         response = self.client.post(self.url, data=data)
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert json_response == {"pokemon": [f'Invalid pk "{nonexistent_id}" - object does not exist.']}
+        assert json_response == {"pokemon_id": [f'Invalid pk "{nonexistent_id}" - object does not exist.']}
 
     def test_create_my_pokemon_with_duplicate_pokemon_returns_400(self):
         # Add pokemon to player's collection first
         PlayerPokemon.objects.create(player=self.player, pokemon=self.charmander)
 
         self.client.force_authenticate(user=self.player)
-        data = {"pokemon": str(self.charmander.id)}
+        data = {"pokemon_id": str(self.charmander.id)}
 
         response = self.client.post(self.url, data=data)
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "pokemon" in json_response
+        assert "pokemon_id" in json_response
         # The error can be a dict or list, handle both cases
-        error_msg = str(json_response["pokemon"])
-        if isinstance(json_response["pokemon"], list):
-            error_msg = str(json_response["pokemon"][0])
+        error_msg = str(json_response["pokemon_id"])
+        if isinstance(json_response["pokemon_id"], list):
+            error_msg = str(json_response["pokemon_id"][0])
         assert "already own" in error_msg.lower()
 
     def test_create_my_pokemon_without_pokemon_id_returns_400(self):
@@ -177,7 +177,7 @@ class TestPokemonMeCreatePOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert json_response == {"pokemon": ["This field is required."]}
+        assert json_response == {"pokemon_id": ["This field is required."]}
 
     def test_create_my_pokemon_respects_wins_limit(self):
         # Set player wins to 1 (can only have 1 pokemon)
@@ -188,13 +188,17 @@ class TestPokemonMeCreatePOST:
         PlayerPokemon.objects.create(player=self.player, pokemon=self.charmander)
 
         self.client.force_authenticate(user=self.player)
-        data = {"pokemon": str(self.squirtle.id)}
+        data = {"pokemon_id": str(self.squirtle.id)}
 
         response = self.client.post(self.url, data=data)
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "wins" in str(json_response).lower() or "pokemon" in str(json_response).lower()
+        assert json_response == {
+            "non_field_errors": [
+                "You can only have up to 1 pokemon (based on your wins). You currently have 1 pokemon."
+            ]
+        }
 
     def test_create_my_pokemon_allows_first_pokemon_without_wins(self):
         # Player with 0 wins should be able to add first pokemon
@@ -202,7 +206,7 @@ class TestPokemonMeCreatePOST:
         self.player.save()
 
         self.client.force_authenticate(user=self.player)
-        data = {"pokemon": str(self.charmander.id)}
+        data = {"pokemon_id": str(self.charmander.id)}
 
         response = self.client.post(self.url, data=data)
         json_response = response.json()
