@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import RetrieveUpdateAPIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -8,7 +8,8 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 
-from players.serializers import LoginSerializer, PlayerSerializer, RegisterSerializer
+from players.models import Player
+from players.serializers import LoginSerializer, PlayerSerializer, PlayerUpdateSerializer, RegisterSerializer
 
 
 class AuthViewSet(CreateModelMixin, GenericViewSet):
@@ -43,9 +44,18 @@ class AuthViewSet(CreateModelMixin, GenericViewSet):
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
-class PlayerMeView(RetrieveAPIView):
+class PlayerMeView(RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = PlayerSerializer
 
     def get_object(self):
-        return self.request.user
+        user = self.request.user
+        if self.request.method == "GET":
+            return Player.objects.select_related(
+                "active_pokemon__pokemon__primary_type", "active_pokemon__pokemon__secondary_type"
+            ).get(id=user.id)
+        return user
+
+    def get_serializer_class(self):
+        if self.request.method == "PATCH":
+            return PlayerUpdateSerializer
+        return PlayerSerializer

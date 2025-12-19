@@ -15,6 +15,14 @@ class Player(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True, help_text="When the player account was created")
     is_active = models.BooleanField(default=True, help_text="Whether this player account is active")
     is_staff = models.BooleanField(default=False, help_text="Whether the player can access the admin site")
+    active_pokemon = models.ForeignKey(
+        "pokemon.PlayerPokemon",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="active_for_players",
+        help_text="The active Pokemon for battles",
+    )
 
     objects = PlayerManager()
 
