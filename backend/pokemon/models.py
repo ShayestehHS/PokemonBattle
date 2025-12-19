@@ -1,7 +1,9 @@
 from django.db import models
+from django.utils import timezone
 from uuid_extensions import uuid7
 
 from pokemon.managers import PokemonManager
+from utils.managers import SoftDeleteManager
 
 
 class PokemonType(models.Model):
@@ -130,6 +132,10 @@ class PlayerPokemon(models.Model):
         help_text="The Pokemon owned by the player",
     )
     created_at = models.DateTimeField(auto_now_add=True, help_text="When the player obtained this Pokemon")
+    deleted_at = models.DateTimeField(null=True, blank=True, help_text="When this Pokemon was removed from the team")
+
+    with_trash = models.Manager()
+    objects = SoftDeleteManager()
 
     class Meta:
         db_table = "player_pokemon"
@@ -145,3 +151,7 @@ class PlayerPokemon(models.Model):
 
     def __str__(self) -> str:
         return f"{self.player.username} - {self.pokemon.name}"
+
+    def delete(self, using=None, keep_parents=False):
+        self.deleted_at = timezone.now()
+        self.save(update_fields=["deleted_at"])
