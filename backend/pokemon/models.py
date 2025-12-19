@@ -95,6 +95,12 @@ class Pokemon(models.Model):
         help_text="Secondary Pokemon type (optional)",
     )
     created_at = models.DateTimeField(auto_now_add=True, help_text="When this Pokemon was added to the database")
+    players = models.ManyToManyField(
+        "players.Player",
+        through="pokemon.PlayerPokemon",
+        related_name="pokemons",
+        help_text="Players who own this Pokemon",
+    )
 
     objects = PokemonManager()
 
@@ -105,3 +111,37 @@ class Pokemon(models.Model):
 
     def __str__(self) -> str:
         return f"#{self.pokedex_number} {self.name}"
+
+
+class PlayerPokemon(models.Model):
+    id = models.UUIDField(
+        primary_key=True, default=uuid7, editable=False, help_text="UUIDv7 primary key (time-sortable)"
+    )
+    player = models.ForeignKey(
+        "players.Player",
+        on_delete=models.CASCADE,
+        related_name="player_pokemon",
+        help_text="The player who owns this Pokemon",
+    )
+    pokemon = models.ForeignKey(
+        Pokemon,
+        on_delete=models.CASCADE,
+        related_name="player_pokemon",
+        help_text="The Pokemon owned by the player",
+    )
+    created_at = models.DateTimeField(auto_now_add=True, help_text="When the player obtained this Pokemon")
+
+    class Meta:
+        db_table = "player_pokemon"
+        verbose_name = "Player Pokemon"
+        verbose_name_plural = "Player Pokemon"
+        ordering = ["-id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["player", "pokemon"],
+                name="unique_player_pokemon",
+            ),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.player.username} - {self.pokemon.name}"
