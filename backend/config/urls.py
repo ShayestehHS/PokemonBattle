@@ -4,6 +4,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 base_urlpatterns = [
     path("players/", include("players.urls", namespace="players")),
+    path("pokemon/", include("pokemon.urls", namespace="pokemon")),
 ]
 
 if settings.DEBUG:
