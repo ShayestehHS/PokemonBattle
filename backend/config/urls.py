@@ -1,10 +1,12 @@
 from django.conf import settings
+from django.http import JsonResponse
 from django.urls import include, path, re_path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 base_urlpatterns = [
     path("players/", include("players.urls", namespace="players")),
     path("pokemon/", include("pokemon.urls", namespace="pokemon")),
+    path("health/", lambda request: JsonResponse({"status": "ok"}), name="health"),
 ]
 
 if settings.DEBUG:
