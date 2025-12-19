@@ -8,7 +8,7 @@ class TestPlayerMeGET:
     @pytest.fixture(autouse=True)
     def setup(self, api_client, create_player):
         self.client = api_client
-        self.url = reverse("players:player-me")
+        self.url = reverse("players:me")
         self.player = create_player(username="testuser", password="TestPass123!")
 
     def test_get_me_with_authentication_returns_200(self):
