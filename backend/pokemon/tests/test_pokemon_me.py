@@ -149,7 +149,7 @@ class TestPokemonMeCreatePOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "pokemon" in json_response
+        assert json_response == {"pokemon": [f'Invalid pk "{nonexistent_id}" - object does not exist.']}
 
     def test_create_my_pokemon_with_duplicate_pokemon_returns_400(self):
         # Add pokemon to player's collection first
