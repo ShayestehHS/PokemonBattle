@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     # Third party
     "corsheaders",
     "rest_framework",
+    "django_filters",
     "rest_framework_simplejwt",
     "drf_spectacular",
     "drf_to_mkdoc",
