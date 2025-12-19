@@ -1,6 +1,6 @@
-from services.base import BasePokemonClient
-from services.pokeapi import PokeAPIClient
-from services.types import (
+from utils.third_party_services.PokemonAPI.base import BasePokemonClient
+from utils.third_party_services.PokemonAPI.pokeapi import PokeAPIClient
+from utils.third_party_services.PokemonAPI.types import (
     PokemonData,
     PokemonStatsData,
     PokemonTypeData,

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from services.types import PokemonData, PokemonTypeData, TypeEffectivenessData
+from utils.third_party_services.PokemonAPI.types import PokemonData, PokemonTypeData, TypeEffectivenessData
 
 
 class BasePokemonClient(ABC):
