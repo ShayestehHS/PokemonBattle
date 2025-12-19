@@ -80,14 +80,20 @@ class PokemonDetailSerializer(serializers.ModelSerializer):
 
 
 class PlayerPokemonCreateSerializer(serializers.ModelSerializer):
+    pokemon_id = serializers.UUIDField(write_only=True)
+
     class Meta:
         model = PlayerPokemon
-        fields = ["pokemon"]
+        fields = ["pokemon_id"]
         read_only_fields = ["player"]
 
-    def validate_pokemon(self, value):
-        if PlayerPokemon.with_trash.filter(player=self.context["request"].user, pokemon=value).exists():
-            raise serializers.ValidationError("You already own this pokemon.")
+    def validate_pokemon_id(self, value):
+        if not Pokemon.objects.filter(id=value).exists():
+            raise serializers.ValidationError({"pokemon_id": [f'Invalid pk "{value}" - object does not exist.']})
+
+        if PlayerPokemon.objects.filter(player=self.context["request"].user, pokemon_id=value).exists():
+            raise serializers.ValidationError({"pokemon_id": ["You already own this pokemon."]})
+
         return value
 
     def validate(self, attrs):
