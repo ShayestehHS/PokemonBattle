@@ -1,7 +1,11 @@
+import logging
+
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 
 from utils.cache.constants import CACHE_TTL
+
+logger = logging.getLogger(__name__)
 
 
 def cache_page_with_prefix(prefix_key, timeout=None):
@@ -25,22 +29,23 @@ def invalidate_cache_prefix(prefix_key):
     Args:
         prefix_key: The cache prefix key to invalidate
     """
-    try:
-        redis_client = cache._cache.get_client(write=True)
+    if hasattr(cache, "_cache") and hasattr(cache._cache, "get_client"):
+        try:
+            redis_client = cache._cache.get_client(write=True)
 
-        # ToDo: Check which pattern is use in the cache_page in our version
-        pattern1 = f"*:views.decorators.cache.cache_page.*:{prefix_key}:*"
-        pattern2 = f"views.decorators.cache.cache_page.*:{prefix_key}:*"
-        for pattern in (pattern1, pattern2):
-            # Find matching keys in batch
-            cursor = 0
-            while True:
-                cursor, keys = redis_client.scan(cursor, match=pattern, count=100)
-                if keys:
-                    redis_client.delete(*keys)
-                if cursor == 0:
-                    break
+            # ToDo: Check which pattern is use in the cache_page in our version
+            pattern1 = f"*:views.decorators.cache.cache_page.*:{prefix_key}:*"
+            pattern2 = f"views.decorators.cache.cache_page.*:{prefix_key}:*"
+            for pattern in (pattern1, pattern2):
+                # Find matching keys in batch
+                cursor = 0
+                while True:
+                    cursor, keys = redis_client.scan(cursor, match=pattern, count=100)
+                    if keys:
+                        redis_client.delete(*keys)
+                    if cursor == 0:
+                        break
 
-    except Exception:
-        # If cache operations fail, just continue silently
-        pass
+        except (AttributeError, Exception):
+            # If cache operations fail (e.g., DummyCache), just continue silently
+            logger.exception("Failed to invalidate cache prefix: %s", prefix_key)
