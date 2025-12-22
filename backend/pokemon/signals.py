@@ -2,12 +2,12 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from pokemon.models import Pokemon, PokemonType, TypeEffectiveness
-from utils.cache import (
+from utils.cache.constants import (
     CACHE_PREFIX_POKEMON,
     CACHE_PREFIX_POKEMON_TYPE,
     CACHE_PREFIX_TYPE_EFFECTIVENESS,
-    invalidate_cache_prefix,
 )
+from utils.cache.manager import invalidate_cache_prefix
 
 
 @receiver(post_save, sender=Pokemon)

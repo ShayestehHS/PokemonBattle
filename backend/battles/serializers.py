@@ -3,7 +3,7 @@ from rest_framework import serializers
 from battles.models import Battle, BattleTurn
 from players.models import Player
 from pokemon.models import PlayerPokemon
-from utils.game import BattleManager
+from utils.game.battle_manager import BattleManager
 from utils.game.items import ItemType
 
 

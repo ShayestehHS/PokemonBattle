@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from pokemon.models import Pokemon, PokemonType
-from utils.third_party_services.PokemonAPI import PokeAPIClient
+from utils.third_party_services.PokemonAPI.pokeapi.client import PokeAPIClient
 
 
 class Command(BaseCommand):

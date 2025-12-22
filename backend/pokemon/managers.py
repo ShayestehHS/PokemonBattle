@@ -3,7 +3,8 @@ from typing import TYPE_CHECKING
 
 from django.db import models
 
-from utils.cache import CACHE_PREFIX_POKEMON, invalidate_cache_prefix
+from utils.cache.constants import CACHE_PREFIX_POKEMON
+from utils.cache.manager import invalidate_cache_prefix
 
 if TYPE_CHECKING:
     from utils.third_party_services.PokemonAPI.base import BasePokemonClient

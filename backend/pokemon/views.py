@@ -22,13 +22,13 @@ from pokemon.serializers import (
     TypeEffectivenessSerializer,
 )
 from pokemon.throttles import PokeAPIThrottle
-from utils.cache import (
+from utils.cache.constants import (
     CACHE_PREFIX_POKEMON,
     CACHE_PREFIX_POKEMON_TYPE,
     CACHE_PREFIX_TYPE_EFFECTIVENESS,
-    cache_page_with_prefix,
 )
-from utils.third_party_services.PokemonAPI import PokeAPIClient
+from utils.cache.manager import cache_page_with_prefix
+from utils.third_party_services.PokemonAPI.pokeapi.client import PokeAPIClient
 
 logger = logging.getLogger(__name__)
 
