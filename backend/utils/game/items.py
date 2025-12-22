@@ -24,9 +24,7 @@ class ItemType:
     ALL = [POTION, X_ATTACK, X_DEFENSE]
 
 
-class PotionHandler:
-    HEAL_AMOUNT = 50
-
+class BaseItemHandler:
     @classmethod
     def use(cls, battle, player) -> ItemUseResult:
         is_player1 = battle.player1 == player
@@ -37,6 +35,30 @@ class PotionHandler:
         else:
             cls._validate_player2(battle)
             return cls._apply_player2(battle)
+
+    @classmethod
+    def _validate_player1(cls, battle):
+        raise NotImplementedError("Subclasses must implement _validate_player1")
+
+    @classmethod
+    def _validate_player2(cls, battle):
+        raise NotImplementedError("Subclasses must implement _validate_player2")
+
+    @classmethod
+    def _apply(cls, battle, player_name) -> ItemUseResult:
+        raise NotImplementedError("Subclasses must implement _apply")
+
+    @classmethod
+    def _apply_player1(cls, battle) -> ItemUseResult:
+        return cls._apply(battle, "player1")
+
+    @classmethod
+    def _apply_player2(cls, battle) -> ItemUseResult:
+        return cls._apply(battle, "player2")
+
+
+class PotionHandler(BaseItemHandler):
+    HEAL_AMOUNT = 50
 
     @classmethod
     def _validate_player1(cls, battle):
@@ -49,27 +71,12 @@ class PotionHandler:
             raise NoPotionRemainingException()
 
     @classmethod
-    def _apply_player1(cls, battle) -> ItemUseResult:
-        battle.player1_potions -= 1
-        current_hp = battle.player1_current_hp
-        max_hp = battle.player1_pokemon.pokemon.base_hp
+    def _apply(cls, battle, player_name) -> ItemUseResult:
+        setattr(battle, f"{player_name}_potions", getattr(battle, f"{player_name}_potions") - 1)
+        current_hp = getattr(battle, f"{player_name}_current_hp")
+        max_hp = getattr(battle, f"{player_name}_pokemon").pokemon.base_hp
         new_hp = min(max_hp, current_hp + cls.HEAL_AMOUNT)
-        battle.player1_current_hp = new_hp
-        hp_restored = new_hp - current_hp
-
-        return ItemUseResult(
-            message=f"Used Potion! Restored {hp_restored} HP.",
-            hp_restored=hp_restored,
-            new_hp=new_hp,
-        )
-
-    @classmethod
-    def _apply_player2(cls, battle) -> ItemUseResult:
-        battle.player2_potions -= 1
-        current_hp = battle.player2_current_hp
-        max_hp = battle.player2_pokemon.pokemon.base_hp
-        new_hp = min(max_hp, current_hp + cls.HEAL_AMOUNT)
-        battle.player2_current_hp = new_hp
+        setattr(battle, f"{player_name}_current_hp", new_hp)
         hp_restored = new_hp - current_hp
 
         return ItemUseResult(
@@ -79,20 +86,9 @@ class PotionHandler:
         )
 
 
-class XAttackHandler:
+class XAttackHandler(BaseItemHandler):
     BOOST_TURNS = 2
     BOOST_MULTIPLIER = "50%"
-
-    @classmethod
-    def use(cls, battle, player) -> ItemUseResult:
-        is_player1 = battle.player1 == player
-
-        if is_player1:
-            cls._validate_player1(battle)
-            return cls._apply_player1(battle)
-        else:
-            cls._validate_player2(battle)
-            return cls._apply_player2(battle)
 
     @classmethod
     def _validate_player1(cls, battle):
@@ -105,19 +101,9 @@ class XAttackHandler:
             raise NoXAttackRemainingException()
 
     @classmethod
-    def _apply_player1(cls, battle) -> ItemUseResult:
-        battle.player1_x_attack -= 1
-        battle.player1_attack_boost = cls.BOOST_TURNS
-
-        return ItemUseResult(
-            message=f"Used X-Attack! Attack boosted by {cls.BOOST_MULTIPLIER} for {cls.BOOST_TURNS} turns.",
-            boost_turns_remaining=cls.BOOST_TURNS,
-        )
-
-    @classmethod
-    def _apply_player2(cls, battle) -> ItemUseResult:
-        battle.player2_x_attack -= 1
-        battle.player2_attack_boost = cls.BOOST_TURNS
+    def _apply(cls, battle, player_name) -> ItemUseResult:
+        setattr(battle, f"{player_name}_x_attack", getattr(battle, f"{player_name}_x_attack") - 1)
+        setattr(battle, f"{player_name}_attack_boost", cls.BOOST_TURNS)
 
         return ItemUseResult(
             message=f"Used X-Attack! Attack boosted by {cls.BOOST_MULTIPLIER} for {cls.BOOST_TURNS} turns.",
@@ -125,19 +111,8 @@ class XAttackHandler:
         )
 
 
-class XDefenseHandler:
+class XDefenseHandler(BaseItemHandler):
     BOOST_TURNS = 2
-
-    @classmethod
-    def use(cls, battle, player) -> ItemUseResult:
-        is_player1 = battle.player1 == player
-
-        if is_player1:
-            cls._validate_player1(battle)
-            return cls._apply_player1(battle)
-        else:
-            cls._validate_player2(battle)
-            return cls._apply_player2(battle)
 
     @classmethod
     def _validate_player1(cls, battle):
@@ -150,19 +125,9 @@ class XDefenseHandler:
             raise NoXDefenseRemainingException()
 
     @classmethod
-    def _apply_player1(cls, battle) -> ItemUseResult:
-        battle.player1_x_defense -= 1
-        battle.player1_defense_boost = cls.BOOST_TURNS
-
-        return ItemUseResult(
-            message=f"Used X-Defense! Defense boosted for {cls.BOOST_TURNS} turns.",
-            boost_turns_remaining=cls.BOOST_TURNS,
-        )
-
-    @classmethod
-    def _apply_player2(cls, battle) -> ItemUseResult:
-        battle.player2_x_defense -= 1
-        battle.player2_defense_boost = cls.BOOST_TURNS
+    def _apply(cls, battle, player_name) -> ItemUseResult:
+        setattr(battle, f"{player_name}_x_defense", getattr(battle, f"{player_name}_x_defense") - 1)
+        setattr(battle, f"{player_name}_defense_boost", cls.BOOST_TURNS)
 
         return ItemUseResult(
             message=f"Used X-Defense! Defense boosted for {cls.BOOST_TURNS} turns.",
