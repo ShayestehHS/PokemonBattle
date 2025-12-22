@@ -108,10 +108,10 @@ class PlayerPokemonCreateSerializer(serializers.ModelSerializer):
 
     def validate_pokemon_id(self, value):
         if not Pokemon.objects.filter(id=value).exists():
-            raise serializers.ValidationError({"pokemon_id": [f'Invalid pk "{value}" - object does not exist.']})
+            raise serializers.ValidationError(f'Invalid pk "{value}" - object does not exist.')
 
         if PlayerPokemon.objects.filter(player=self.context["request"].user, pokemon_id=value).exists():
-            raise serializers.ValidationError({"pokemon_id": ["You already own this pokemon."]})
+            raise serializers.ValidationError("You already own this pokemon.")
 
         return value
 
