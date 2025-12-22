@@ -38,6 +38,7 @@ class TestPokemonMeListGET:
             "sprite_url",
             "primary_type_name",
             "secondary_type_name",
+            "player_pokemon_id",
         }
         pokemon_names = [pokemon["name"] for pokemon in json_response["results"]]
         assert "Charmander" in pokemon_names

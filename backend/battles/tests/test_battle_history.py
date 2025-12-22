@@ -46,12 +46,18 @@ class TestBattleRetrieveGET:
             "turn_number",
             "turns",
             "winner_id",
-            "player1_inventory",
-            "player2_inventory",
+            "player1_potions",
+            "player1_x_attack",
+            "player1_x_defense",
+            "player2_potions",
+            "player2_x_attack",
+            "player2_x_defense",
             "player1_attack_boost",
             "player1_defense_boost",
             "player2_attack_boost",
             "player2_defense_boost",
+            "created_at",
+            "completed_at",
         }
         assert json_response["id"] == str(self.battle.id)
         assert json_response["status"] == "active"
@@ -61,16 +67,14 @@ class TestBattleRetrieveGET:
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_retrieve_battle_state_when_not_participant_returns_403(self, create_player):
+    def test_retrieve_battle_state_when_not_participant_returns_404(self, create_player):
         other_player = create_player(username="other", password="TestPass123!")
 
         self.client.force_authenticate(user=other_player)
 
         response = self.client.get(self._get_url(self.battle.id))
-        json_response = response.json()
 
-        assert response.status_code == status.HTTP_403_FORBIDDEN
-        assert "not a participant" in json_response["detail"]
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_retrieve_battle_state_with_invalid_id_returns_404(self):
         self.client.force_authenticate(user=self.player)
@@ -87,7 +91,7 @@ class TestBattleHistoryGET:
         self, api_client, create_player, create_pokemon, create_pokemon_type, create_player_pokemon, create_battle
     ):
         self.client = api_client
-        self.url = reverse("battles:battle-history")
+        self.url = reverse("battles:battle-history-list")
         self.player = create_player(username="player1", password="TestPass123!")
         self.opponent = create_player(username="opponent", password="TestPass123!")
         fire_type = create_pokemon_type(name="fire")
@@ -112,9 +116,10 @@ class TestBattleHistoryGET:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_200_OK
-        assert isinstance(json_response, list)
-        assert len(json_response) >= 1
-        battle_data = json_response[0]
+        assert "results" in json_response
+        assert isinstance(json_response["results"], list)
+        assert len(json_response["results"]) >= 1
+        battle_data = json_response["results"][0]
         assert set(battle_data.keys()) == {
             "id",
             "status",
@@ -157,8 +162,9 @@ class TestBattleHistoryGET:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_200_OK
-        assert len(json_response) == 1
-        assert json_response[0]["id"] == str(completed_battle.id)
+        assert "results" in json_response
+        assert len(json_response["results"]) == 1
+        assert json_response["results"][0]["id"] == str(completed_battle.id)
 
 
 @pytest.mark.django_db
@@ -201,13 +207,11 @@ class TestBattleDetailGET:
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_get_battle_detail_when_not_participant_returns_403(self, create_player):
+    def test_get_battle_detail_when_not_participant_returns_404(self, create_player):
         other_player = create_player(username="other", password="TestPass123!")
 
         self.client.force_authenticate(user=other_player)
 
         response = self.client.get(self._get_url(self.battle.id))
-        json_response = response.json()
 
-        assert response.status_code == status.HTTP_403_FORBIDDEN
-        assert "not a participant" in json_response["detail"]
+        assert response.status_code == status.HTTP_404_NOT_FOUND

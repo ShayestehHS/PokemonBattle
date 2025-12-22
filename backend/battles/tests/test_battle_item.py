@@ -49,6 +49,7 @@ class TestBattleUseItemPOST:
             "message",
             "hp_restored",
             "new_hp",
+            "boost_turns_remaining",
             "inventory",
         }
         assert json_response["success"] is True
@@ -140,17 +141,15 @@ class TestBattleUseItemPOST:
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
-    def test_use_item_when_not_participant_returns_403(self, create_player):
+    def test_use_item_when_not_participant_returns_404(self, create_player):
         other_player = create_player(username="other", password="TestPass123!")
 
         self.client.force_authenticate(user=other_player)
         data = {"item_type": "potion"}
 
         response = self.client.post(self._get_url(self.battle.id), data=data)
-        json_response = response.json()
 
-        assert response.status_code == status.HTTP_403_FORBIDDEN
-        assert "not a participant" in json_response["detail"]
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_use_item_when_not_your_turn_returns_400(self):
         self.battle.current_turn_player = self.opponent
@@ -163,7 +162,7 @@ class TestBattleUseItemPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "Not your turn" in str(json_response) or "item_type" in json_response
+        assert "It is not your turn" in str(json_response) or "item_type" in json_response
 
     def test_use_item_when_battle_completed_returns_400(self):
         self.battle.status = Battle.STATUS_COMPLETED

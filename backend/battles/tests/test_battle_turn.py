@@ -33,8 +33,8 @@ class TestBattleTurnPOST:
     def _get_url(self, battle_id):
         return reverse("battles:battle-turn", kwargs={"pk": battle_id})
 
-    @patch("battles.services.battle_engine.get_ai_action")
-    @patch("battles.services.damage_calculator.random.random")
+    @patch("utils.game.ai.BattleAI.get_action")
+    @patch("utils.game.damage_calculator.random.random")
     def test_submit_turn_with_attack_action_returns_200(self, mock_random, mock_ai_action):
         mock_random.return_value = 0.5  # No crit
         mock_ai_action.return_value = "attack"
@@ -49,7 +49,7 @@ class TestBattleTurnPOST:
         assert "battle" in json_response or "id" in json_response
         assert BattleTurn.objects.filter(battle=self.battle, player=self.player).exists()
 
-    @patch("battles.services.battle_engine.get_ai_action")
+    @patch("utils.game.ai.BattleAI.get_action")
     def test_submit_turn_with_defend_action_returns_200(self, mock_ai_action):
         mock_ai_action.return_value = "defend"
 
@@ -76,17 +76,15 @@ class TestBattleTurnPOST:
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
-    def test_submit_turn_when_not_participant_returns_403(self, create_player):
+    def test_submit_turn_when_not_participant_returns_404(self, create_player):
         other_player = create_player(username="other", password="TestPass123!")
 
         self.client.force_authenticate(user=other_player)
         data = {"action": "attack"}
 
         response = self.client.post(self._get_url(self.battle.id), data=data)
-        json_response = response.json()
 
-        assert response.status_code == status.HTTP_403_FORBIDDEN
-        assert "not a participant" in json_response["detail"]
+        assert response.status_code == status.HTTP_404_NOT_FOUND
 
     def test_submit_turn_when_not_your_turn_returns_400(self):
         self.battle.current_turn_player = self.opponent
@@ -99,7 +97,7 @@ class TestBattleTurnPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "Not your turn" in json_response["detail"]
+        assert "It is not your turn" in json_response["detail"]
 
     def test_submit_turn_with_invalid_action_returns_400(self):
         self.client.force_authenticate(user=self.player)
@@ -130,8 +128,8 @@ class TestBattleTurnPOST:
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "not active" in json_response["detail"]
 
-    @patch("battles.services.battle_engine.get_ai_action")
-    @patch("battles.services.damage_calculator.random.random")
+    @patch("utils.game.ai.BattleAI.get_action")
+    @patch("utils.game.damage_calculator.random.random")
     def test_submit_turn_completes_battle_when_hp_reaches_zero(self, mock_random, mock_ai_action):
         mock_random.return_value = 0.5  # No crit
         mock_ai_action.return_value = "attack"

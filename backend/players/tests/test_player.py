@@ -18,7 +18,15 @@ class TestPlayerMeGET:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_200_OK
-        assert set(json_response.keys()) == {"id", "username", "wins", "losses", "win_rate", "created_at"}
+        assert set(json_response.keys()) == {
+            "id",
+            "username",
+            "wins",
+            "losses",
+            "win_rate",
+            "created_at",
+            "active_pokemon",
+        }
         assert json_response["username"] == "testuser"
         assert json_response["wins"] == 0
         assert json_response["losses"] == 0

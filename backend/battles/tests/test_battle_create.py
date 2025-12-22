@@ -44,12 +44,18 @@ class TestBattleCreatePOST:
             "turn_number",
             "turns",
             "winner_id",
-            "player1_inventory",
-            "player2_inventory",
+            "player1_potions",
+            "player1_x_attack",
+            "player1_x_defense",
+            "player2_potions",
+            "player2_x_attack",
+            "player2_x_defense",
             "player1_attack_boost",
             "player1_defense_boost",
             "player2_attack_boost",
             "player2_defense_boost",
+            "created_at",
+            "completed_at",
         }
         assert json_response["status"] == "active"
         assert json_response["turn_number"] == 1
