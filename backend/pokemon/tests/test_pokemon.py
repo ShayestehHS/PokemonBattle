@@ -35,7 +35,7 @@ class TestPokemonListGET:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert json_response == {"detail": "Authentication credentials were not provided."}
+        assert json_response == {"message": "Authentication credentials were not provided."}
 
     def test_list_pokemon_with_type_filter_returns_filtered_results(self):
         self.client.force_authenticate(user=self.player)
@@ -93,7 +93,7 @@ class TestPokemonRetrieveGET:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert json_response == {"detail": "Authentication credentials were not provided."}
+        assert json_response == {"message": "Authentication credentials were not provided."}
 
     def test_retrieve_nonexistent_pokemon_returns_404(self):
         self.client.force_authenticate(user=self.player)
@@ -105,8 +105,7 @@ class TestPokemonRetrieveGET:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_404_NOT_FOUND
-        assert "detail" in json_response
-        assert json_response["detail"] in ["Not found.", "No Pokemon matches the given query."]
+        assert json_response == {"message": "No Pokemon matches the given query."}
 
 
 @pytest.mark.django_db
@@ -152,7 +151,7 @@ class TestPokemonStartersGET:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert json_response == {"detail": "Authentication credentials were not provided."}
+        assert json_response == {"message": "Authentication credentials were not provided."}
 
     def test_starters_returns_one_pokemon_per_primary_type(self):
         self.client.force_authenticate(user=self.player)

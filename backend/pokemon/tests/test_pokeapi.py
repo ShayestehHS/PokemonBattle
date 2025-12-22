@@ -77,7 +77,7 @@ class TestPokeAPISearchGET:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert json_response == {"detail": "Authentication credentials were not provided."}
+        assert json_response == {"message": "Authentication credentials were not provided."}
 
     def test_search_nonexistent_pokemon_returns_null_data(self, mock_pokeapi_client):
         self.client.force_authenticate(user=self.player)
@@ -132,7 +132,7 @@ class TestPokeAPIListPokemonGET:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert json_response == {"detail": "Authentication credentials were not provided."}
+        assert json_response == {"message": "Authentication credentials were not provided."}
 
     def test_list_pokemon_with_custom_offset_and_limit_returns_correct_range(self, create_pokemon_type, create_pokemon):
         self.client.force_authenticate(user=self.player)
@@ -246,7 +246,7 @@ class TestPokeAPIChoicesGET:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert json_response == {"detail": "Authentication credentials were not provided."}
+        assert json_response == {"message": "Authentication credentials were not provided."}
 
     def test_choices_returns_first_20_pokemon_ordered_by_pokedex_number(self):
         self.client.force_authenticate(user=self.player)

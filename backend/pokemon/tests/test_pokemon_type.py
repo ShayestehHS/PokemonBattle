@@ -32,7 +32,7 @@ class TestPokemonTypeListGET:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert json_response == {"detail": "Authentication credentials were not provided."}
+        assert json_response == {"message": "Authentication credentials were not provided."}
 
     def test_list_pokemon_types_ordered_by_name(self):
         self.client.force_authenticate(user=self.player)

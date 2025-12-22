@@ -49,7 +49,7 @@ class TestPokemonMeListGET:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert json_response == {"detail": "Authentication credentials were not provided."}
+        assert json_response == {"message": "Authentication credentials were not provided."}
 
     def test_list_my_pokemon_returns_only_owned_pokemon(self):
         # Create another player with different pokemon
@@ -137,7 +137,7 @@ class TestPokemonMeCreatePOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert json_response == {"detail": "Authentication credentials were not provided."}
+        assert json_response == {"message": "Authentication credentials were not provided."}
 
     def test_create_my_pokemon_with_nonexistent_pokemon_id_returns_400(self):
         self.client.force_authenticate(user=self.player)
@@ -150,7 +150,10 @@ class TestPokemonMeCreatePOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert json_response == {"pokemon_id": [f'Invalid pk "{nonexistent_id}" - object does not exist.']}
+        assert json_response == {
+            "field_name": "pokemon_id",
+            "message": f'Invalid pk "{nonexistent_id}" - object does not exist.',
+        }
 
     def test_create_my_pokemon_with_duplicate_pokemon_returns_400(self):
         # Add pokemon to player's collection first
@@ -163,12 +166,7 @@ class TestPokemonMeCreatePOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "pokemon_id" in json_response
-        # The error can be a dict or list, handle both cases
-        error_msg = str(json_response["pokemon_id"])
-        if isinstance(json_response["pokemon_id"], list):
-            error_msg = str(json_response["pokemon_id"][0])
-        assert "already own" in error_msg.lower()
+        assert json_response == {"field_name": "pokemon_id", "message": "You already own this pokemon."}
 
     def test_create_my_pokemon_without_pokemon_id_returns_400(self):
         self.client.force_authenticate(user=self.player)
@@ -178,7 +176,7 @@ class TestPokemonMeCreatePOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert json_response == {"pokemon_id": ["This field is required."]}
+        assert json_response == {"field_name": "pokemon_id", "message": "This field is required."}
 
     def test_create_my_pokemon_respects_wins_limit(self):
         # Set player wins to 1 (can only have 1 pokemon)
@@ -196,9 +194,8 @@ class TestPokemonMeCreatePOST:
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert json_response == {
-            "non_field_errors": [
-                "You can only have up to 1 pokemon (based on your wins). You currently have 1 pokemon."
-            ]
+            "field_name": "non_field_errors",
+            "message": "You can only have up to 1 pokemon (based on your wins). You currently have 1 pokemon.",
         }
 
     def test_create_my_pokemon_allows_first_pokemon_without_wins(self):

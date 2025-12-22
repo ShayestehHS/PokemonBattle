@@ -37,7 +37,7 @@ class TestPlayerMeGET:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert json_response == {"detail": "Authentication credentials were not provided."}
+        assert json_response == {"message": "Authentication credentials were not provided."}
 
     def test_get_me_returns_correct_player_data(self):
         self.player.wins = 5

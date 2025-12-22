@@ -33,7 +33,7 @@ class TestTypeEffectivenessListGET:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        assert json_response == {"detail": "Authentication credentials were not provided."}
+        assert json_response == {"message": "Authentication credentials were not provided."}
 
     def test_list_type_effectiveness_with_attacker_filter_returns_filtered_results(self):
         self.client.force_authenticate(user=self.player)
@@ -57,7 +57,7 @@ class TestTypeEffectivenessListGET:
         assert all(effectiveness["defender_type_name"] == "water" for effectiveness in json_response)
         # Check that at least one has the expected multiplier
         multipliers = [e["multiplier"] for e in json_response]
-        assert 0.5 in multipliers or 2.0 in multipliers
+        assert any(m in multipliers for m in [0.5, 2.0])
 
     def test_list_type_effectiveness_with_both_filters_returns_filtered_results(self):
         self.client.force_authenticate(user=self.player)

@@ -119,7 +119,10 @@ class TestBattleCreatePOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "active Pokemon" in str(json_response) or "detail" in json_response
+        assert json_response == {
+            "field_name": "non_field_errors",
+            "message": "You must have an active Pokemon to start a battle.",
+        }
 
     def test_create_battle_with_invalid_opponent_id_returns_400(self, create_player):
         self.client.force_authenticate(user=self.player)
@@ -129,7 +132,7 @@ class TestBattleCreatePOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "opponent_id" in json_response or "Opponent not found" in str(json_response)
+        assert json_response == {"field_name": "opponent_id", "message": "Opponent not found."}
 
     def test_create_battle_with_opponent_without_active_pokemon_returns_400(self, create_player, create_pokemon_type):
         opponent = create_player(username="opponent", password="TestPass123!")
@@ -143,7 +146,7 @@ class TestBattleCreatePOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "active Pokemon" in str(json_response) or "detail" in json_response
+        assert json_response == {"message": "Opponent has no active Pokémon"}
 
     def test_create_battle_with_invalid_pokemon_id_returns_400(
         self, create_player, create_player_pokemon, create_pokemon_type
@@ -160,7 +163,7 @@ class TestBattleCreatePOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "pokemon_id" in json_response or "Pokemon does not belong" in str(json_response)
+        assert json_response == {"field_name": "pokemon_id", "message": "Pokemon does not belong to you."}
 
     def test_create_battle_with_other_player_pokemon_returns_400(
         self, create_player, create_player_pokemon, create_pokemon_type
@@ -177,4 +180,4 @@ class TestBattleCreatePOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "pokemon_id" in json_response or "Pokemon does not belong" in str(json_response)
+        assert json_response == {"field_name": "pokemon_id", "message": "Pokemon does not belong to you."}

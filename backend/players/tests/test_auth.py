@@ -33,7 +33,7 @@ class TestAuthRegisterPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert json_response == {"username": ["Player with this username already exists."]}
+        assert json_response == {"field_name": "username", "message": "Player with this username already exists."}
 
     def test_register_with_weak_password_returns_400(self):
         data = {"username": "newuser", "password": "123"}
@@ -42,7 +42,7 @@ class TestAuthRegisterPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "password" in json_response
+        assert json_response["field_name"] == "password"
 
     def test_register_without_username_returns_400(self):
         data = {"password": "StrongPass123!"}
@@ -51,7 +51,7 @@ class TestAuthRegisterPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert json_response == {"username": ["This field is required."]}
+        assert json_response == {"field_name": "username", "message": "This field is required."}
 
     def test_register_without_password_returns_400(self):
         data = {"username": "newuser"}
@@ -60,7 +60,7 @@ class TestAuthRegisterPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert json_response == {"password": ["This field is required."]}
+        assert json_response == {"field_name": "password", "message": "This field is required."}
 
 
 @pytest.mark.django_db
@@ -89,7 +89,7 @@ class TestAuthLoginPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert json_response == {"detail": ["Invalid credentials."]}
+        assert json_response == {"field_name": "detail", "message": "Invalid credentials."}
 
     def test_login_with_nonexistent_user_returns_400(self):
         data = {"username": "nonexistent", "password": "TestPass123!"}
@@ -98,7 +98,7 @@ class TestAuthLoginPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert json_response == {"detail": ["Invalid credentials."]}
+        assert json_response == {"field_name": "detail", "message": "Invalid credentials."}
 
 
 @pytest.mark.django_db

@@ -46,7 +46,8 @@ class TestBattleTurnPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_200_OK
-        assert "battle" in json_response or "id" in json_response
+        assert "id" in json_response
+        assert "status" in json_response
         assert BattleTurn.objects.filter(battle=self.battle, player=self.player).exists()
 
     @patch("utils.game.ai.BattleAI.get_action")
@@ -97,7 +98,7 @@ class TestBattleTurnPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "It is not your turn" in json_response["detail"]
+        assert json_response == {"message": "It is not your turn"}
 
     def test_submit_turn_with_invalid_action_returns_400(self):
         self.client.force_authenticate(user=self.player)
@@ -126,7 +127,7 @@ class TestBattleTurnPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "not active" in json_response["detail"]
+        assert json_response == {"message": "Battle is not active"}
 
     @patch("utils.game.ai.BattleAI.get_action")
     @patch("utils.game.damage_calculator.random.random")
@@ -144,4 +145,5 @@ class TestBattleTurnPOST:
 
         self.battle.refresh_from_db()
         assert response.status_code == status.HTTP_200_OK
-        assert "winner" in json_response or self.battle.status == Battle.STATUS_COMPLETED
+        assert "battle" in json_response
+        assert self.battle.status == Battle.STATUS_COMPLETED

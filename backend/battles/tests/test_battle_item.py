@@ -106,7 +106,7 @@ class TestBattleUseItemPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "No potions" in str(json_response) or "item_type" in json_response
+        assert json_response == {"message": "No potions remaining"}
 
     def test_use_x_attack_when_no_items_remaining_returns_400(self):
         self.battle.player1_x_attack = 0
@@ -119,7 +119,7 @@ class TestBattleUseItemPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "No X-Attack" in str(json_response) or "detail" in json_response
+        assert json_response == {"message": "No X-Attack remaining"}
 
     def test_use_x_defense_when_no_items_remaining_returns_400(self):
         self.battle.player1_x_defense = 0
@@ -132,7 +132,7 @@ class TestBattleUseItemPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "No X-Defense" in str(json_response) or "detail" in json_response
+        assert json_response == {"message": "No X-Defense remaining"}
 
     def test_use_item_without_authentication_returns_401(self):
         data = {"item_type": "potion"}
@@ -162,7 +162,7 @@ class TestBattleUseItemPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "It is not your turn" in str(json_response) or "item_type" in json_response
+        assert json_response == {"message": "It is not your turn"}
 
     def test_use_item_when_battle_completed_returns_400(self):
         self.battle.status = Battle.STATUS_COMPLETED
@@ -175,7 +175,7 @@ class TestBattleUseItemPOST:
         json_response = response.json()
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert "not active" in str(json_response) or "item_type" in json_response
+        assert json_response == {"message": "Battle is not active"}
 
     def test_use_item_with_invalid_item_type_returns_400(self):
         self.client.force_authenticate(user=self.player)
