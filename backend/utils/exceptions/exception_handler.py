@@ -18,18 +18,22 @@ def exception_handler(exc, context):
                 message = str(error_message[0]) if error_message else "Validation error"
             else:
                 message = str(error_message)
-            return exception_handler(
-                FormError(field_name=field_name, message=message, status_code=status_code), context
-            )
+
+            # validate() raises ValidationError with non_field_errors or detail → ToastError
+            # validate_* raises ValidationError with field name → FormError
+            if field_name in ("non_field_errors", "detail"):
+                return exception_handler(ToastError(message=message, status_code=status_code), context)
+            else:
+                return exception_handler(
+                    FormError(field_name=field_name, message=message, status_code=status_code), context
+                )
 
         else:
             if isinstance(detail, list):
                 message = detail[0] if detail else "Validation error"
             else:
                 message = str(detail)
-            return exception_handler(
-                FormError(field_name="non_field_errors", message=message, status_code=status_code), context
-            )
+            return exception_handler(ToastError(message=message, status_code=status_code), context)
 
     elif not isinstance(exc, FormError | ToastError):
         response = drf_exception_handler(exc, context)

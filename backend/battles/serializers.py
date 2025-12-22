@@ -3,6 +3,7 @@ from rest_framework import serializers
 from battles.models import Battle, BattleTurn
 from players.models import Player
 from pokemon.models import PlayerPokemon
+from utils.exceptions.exceptions import FormError, ToastError
 from utils.game.battle_manager import BattleManager
 from utils.game.items import ItemType
 
@@ -115,23 +116,23 @@ class BattleCreateSerializer(serializers.Serializer):
 
     def validate_opponent_id(self, value):
         if value and not Player.objects.filter(id=value).exists():
-            raise serializers.ValidationError("Opponent not found.")
+            raise FormError(field_name="opponent_id", message="Opponent not found.")
         return value
 
     def validate_pokemon_id(self, value):
         user = self.context["request"].user
         if value and not PlayerPokemon.objects.filter(id=value, player=user).exists():
-            raise serializers.ValidationError("Pokemon does not belong to you.")
+            raise FormError(field_name="pokemon_id", message="Pokemon does not belong to you.")
         return value
 
     def validate(self, attrs):
         user = self.context["request"].user
 
         if Battle.objects.active_for_player(user).exists():
-            raise serializers.ValidationError("You already have an active battle.")
+            raise ToastError(message="You already have an active battle.")
 
         if not user.active_pokemon:
-            raise serializers.ValidationError("You must have an active Pokemon to start a battle.")
+            raise ToastError(message="You must have an active Pokemon to start a battle.")
 
         return attrs
 

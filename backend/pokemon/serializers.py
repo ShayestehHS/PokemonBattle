@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from pokemon.models import PlayerPokemon, Pokemon, PokemonType, TypeEffectiveness
+from utils.exceptions.exceptions import FormError, ToastError
 
 
 class PokeAPIPokemonSerializer(serializers.ModelSerializer):
@@ -108,10 +109,10 @@ class PlayerPokemonCreateSerializer(serializers.ModelSerializer):
 
     def validate_pokemon_id(self, value):
         if not Pokemon.objects.filter(id=value).exists():
-            raise serializers.ValidationError(f'Invalid pk "{value}" - object does not exist.')
+            raise FormError(field_name="pokemon_id", message=f'Invalid pk "{value}" - object does not exist.')
 
         if PlayerPokemon.objects.filter(player=self.context["request"].user, pokemon_id=value).exists():
-            raise serializers.ValidationError("You already own this pokemon.")
+            raise FormError(field_name="pokemon_id", message="You already own this pokemon.")
 
         return value
 
@@ -120,8 +121,8 @@ class PlayerPokemonCreateSerializer(serializers.ModelSerializer):
         current_pokemon_count = PlayerPokemon.objects.filter(player=user).count()
 
         if current_pokemon_count >= 1 and user.wins <= current_pokemon_count:
-            raise serializers.ValidationError(
-                f"You can only have up to {user.wins} pokemon (based on your wins). You currently have {current_pokemon_count} pokemon."
+            raise ToastError(
+                message=f"You can only have up to {user.wins} pokemon (based on your wins). You currently have {current_pokemon_count} pokemon."
             )
 
         return attrs

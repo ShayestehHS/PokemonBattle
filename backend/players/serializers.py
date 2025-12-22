@@ -6,6 +6,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from players.models import Player
 from pokemon.models import PlayerPokemon
 from pokemon.serializers import PokemonDetailSerializer
+from utils.exceptions.exceptions import FormError, ToastError
 
 
 class PlayerSerializer(serializers.ModelSerializer):
@@ -41,7 +42,7 @@ class PlayerUpdateSerializer(serializers.ModelSerializer):
 
         user = self.context["request"].user
         if value.player != user:
-            raise serializers.ValidationError("PlayerPokemon does not belong to you.")
+            raise FormError(field_name="active_pokemon", message="PlayerPokemon does not belong to you.")
 
         return value
 
@@ -84,9 +85,9 @@ class LoginSerializer(AuthResponseMixin, serializers.Serializer):
     def validate(self, attrs):
         player = authenticate(username=attrs["username"], password=attrs["password"])
         if not player:
-            raise serializers.ValidationError({"detail": "Invalid credentials."})
+            raise ToastError(message="Invalid credentials.")
         if not player.is_active:
-            raise serializers.ValidationError({"detail": "User account is disabled."})
+            raise ToastError(message="User account is disabled.")
         attrs["player"] = player
         return attrs
 
