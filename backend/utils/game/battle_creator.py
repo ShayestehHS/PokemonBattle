@@ -4,16 +4,12 @@ import random
 from dataclasses import dataclass
 from uuid import UUID
 
+from rest_framework import status
+
 from battles.models import Battle
 from players.models import Player
 from pokemon.models import PlayerPokemon, Pokemon
-from utils.game.exceptions import (
-    NoOpponentAvailableException,
-    NoPokemonException,
-    OpponentNoPokemonException,
-    OpponentNotFoundException,
-    PokemonNotFoundException,
-)
+from utils.exceptions.exceptions import ToastError
 
 
 @dataclass
@@ -51,11 +47,11 @@ class BattleCreator:
         try:
             return PlayerPokemon.objects.get(id=self.pokemon_id, player=self.user)
         except PlayerPokemon.DoesNotExist as err:
-            raise PokemonNotFoundException() from err
+            raise ToastError("Pokémon not found", status.HTTP_404_NOT_FOUND) from err
 
     def _get_active_pokemon(self) -> PlayerPokemon:
         if not self.user.active_pokemon:
-            raise NoPokemonException()
+            raise ToastError("No active Pokémon selected")
         return self.user.active_pokemon
 
     def _get_opponent(self) -> Player:
@@ -67,7 +63,7 @@ class BattleCreator:
         try:
             return Player.objects.get(id=self.opponent_id)
         except Player.DoesNotExist as err:
-            raise OpponentNotFoundException() from err
+            raise ToastError("Opponent not found", status.HTTP_404_NOT_FOUND) from err
 
     def _get_random_opponent(self) -> Player:
         opponents = Player.objects.exclude(id=self.user.id).filter(active_pokemon__isnull=False)
@@ -81,7 +77,7 @@ class BattleCreator:
         # Get a random Pokemon from the database
         pokemon_count = Pokemon.objects.count()
         if pokemon_count == 0:
-            raise NoOpponentAvailableException("No Pokemon available in database. Please seed Pokemon first.")
+            raise ToastError("No Pokemon available in database. Please seed Pokemon first.", status.HTTP_404_NOT_FOUND)
 
         # Get a random Pokemon
         random_pokemon = Pokemon.objects.order_by("?").first()
@@ -108,7 +104,7 @@ class BattleCreator:
 
     def _get_opponent_pokemon(self, opponent: Player) -> PlayerPokemon:
         if not opponent.active_pokemon:
-            raise OpponentNoPokemonException()
+            raise ToastError("Opponent has no active Pokémon")
         return opponent.active_pokemon
 
     def _determine_turn_order(

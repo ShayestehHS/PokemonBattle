@@ -2,12 +2,13 @@ from dataclasses import dataclass, field
 from uuid import UUID
 
 from django.db import transaction
+from rest_framework import status
 
 from battles.models import Battle
 from players.models import Player
+from utils.exceptions.exceptions import ToastError
 from utils.game.ai import BattleAI
 from utils.game.battle_creator import BattleCreator
-from utils.game.exceptions import BattleNotActiveException, NotParticipantException, NotYourTurnException
 from utils.game.items import ItemHandlerRegistry, ItemUseResult
 from utils.game.turn_processor import TurnProcessor, TurnResult
 
@@ -56,15 +57,15 @@ class BattleManager:
 
     def validate_participant(self):
         if self.battle.player1 != self.player and self.battle.player2 != self.player:
-            raise NotParticipantException()
+            raise ToastError("You are not a participant in this battle", status.HTTP_403_FORBIDDEN)
 
     def validate_active(self):
         if self.battle.status != Battle.STATUS_ACTIVE:
-            raise BattleNotActiveException()
+            raise ToastError("Battle is not active")
 
     def validate_turn(self):
         if not self.battle.is_player_turn(self.player):
-            raise NotYourTurnException()
+            raise ToastError("It is not your turn")
 
     def validate_can_act(self):
         self.validate_participant()

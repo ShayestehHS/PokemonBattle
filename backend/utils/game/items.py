@@ -1,11 +1,6 @@
 from dataclasses import dataclass
 
-from utils.game.exceptions import (
-    InvalidItemTypeException,
-    NoPotionRemainingException,
-    NoXAttackRemainingException,
-    NoXDefenseRemainingException,
-)
+from utils.exceptions.exceptions import ToastError
 
 
 @dataclass
@@ -63,12 +58,12 @@ class PotionHandler(BaseItemHandler):
     @classmethod
     def _validate_player1(cls, battle):
         if battle.player1_potions == 0:
-            raise NoPotionRemainingException()
+            raise ToastError("No potions remaining")
 
     @classmethod
     def _validate_player2(cls, battle):
         if battle.player2_potions == 0:
-            raise NoPotionRemainingException()
+            raise ToastError("No potions remaining")
 
     @classmethod
     def _apply(cls, battle, player_name) -> ItemUseResult:
@@ -93,12 +88,12 @@ class XAttackHandler(BaseItemHandler):
     @classmethod
     def _validate_player1(cls, battle):
         if battle.player1_x_attack == 0:
-            raise NoXAttackRemainingException()
+            raise ToastError("No X-Attack remaining")
 
     @classmethod
     def _validate_player2(cls, battle):
         if battle.player2_x_attack == 0:
-            raise NoXAttackRemainingException()
+            raise ToastError("No X-Attack remaining")
 
     @classmethod
     def _apply(cls, battle, player_name) -> ItemUseResult:
@@ -117,12 +112,12 @@ class XDefenseHandler(BaseItemHandler):
     @classmethod
     def _validate_player1(cls, battle):
         if battle.player1_x_defense == 0:
-            raise NoXDefenseRemainingException()
+            raise ToastError("No X-Defense remaining")
 
     @classmethod
     def _validate_player2(cls, battle):
         if battle.player2_x_defense == 0:
-            raise NoXDefenseRemainingException()
+            raise ToastError("No X-Defense remaining")
 
     @classmethod
     def _apply(cls, battle, player_name) -> ItemUseResult:
@@ -146,7 +141,7 @@ class ItemHandlerRegistry:
     def get_handler(cls, item_type: str):
         handler = cls._handlers.get(item_type)
         if handler is None:
-            raise InvalidItemTypeException(f"Invalid item type: {item_type}")
+            raise ToastError(f"Invalid item type: {item_type}")
         return handler
 
     @classmethod

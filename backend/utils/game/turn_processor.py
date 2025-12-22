@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
 from battles.models import Battle, BattleTurn
+from utils.exceptions.exceptions import ToastError
 from utils.game.damage_calculator import calculate_damage
-from utils.game.exceptions import BattleNotActiveException, NotYourTurnException
 
 
 @dataclass
@@ -30,11 +30,11 @@ class TurnProcessor:
 
     def _validate_battle_active(self):
         if self.battle.status != Battle.STATUS_ACTIVE:
-            raise BattleNotActiveException()
+            raise ToastError("Battle is not active")
 
     def _validate_player_turn(self):
         if not self.battle.is_player_turn(self.player):
-            raise NotYourTurnException()
+            raise ToastError("It is not your turn")
 
     def process(self) -> TurnResult:
         self.validate()
