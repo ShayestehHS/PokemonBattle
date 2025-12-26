@@ -1,0 +1,2045 @@
+{
+  "auth_register_create": {
+    "description": "Registers a new player account and returns JWT authentication tokens. The username must be unique and the password must meet Django's password validation requirements.",
+    "requestBody": {
+      "description": "Player registration credentials",
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "username": {
+                "type": "string",
+                "description": "Unique username for the player account",
+                "example": "ash_ketchum",
+                "maxLength": 150
+              },
+              "password": {
+                "type": "string",
+                "description": "Password for the account (must meet Django password validation requirements)",
+                "example": "SecureP@ss123"
+              }
+            },
+            "required": ["username", "password"]
+          }
+        }
+      }
+    },
+    "responses": {
+      "201": {
+        "description": "Player account created successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "UUIDv7 identifier for the player",
+                  "example": "0190a5b8-1234-7abc-8def-0123456789ab"
+                },
+                "username": {
+                  "type": "string",
+                  "description": "The player's username",
+                  "example": "ash_ketchum"
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Timestamp when the account was created",
+                  "example": "2025-12-18T10:30:00Z"
+                },
+                "token": {
+                  "type": "object",
+                  "description": "JWT authentication tokens",
+                  "properties": {
+                    "access": {
+                      "type": "string",
+                      "description": "JWT access token for authenticating API requests",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    },
+                    "refresh": {
+                      "type": "string",
+                      "description": "JWT refresh token for obtaining new access tokens",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  },
+                  "required": ["access", "refresh"]
+                }
+              },
+              "required": ["id", "username", "created_at", "token"]
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Validation error - invalid username or password",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Username validation errors",
+                  "example": ["A user with that username already exists."]
+                },
+                "password": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Password validation errors",
+                  "example": ["This password is too common."]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "auth_login_create": {
+    "description": "Authenticates a player with username and password, returning JWT tokens for subsequent API requests.",
+    "requestBody": {
+      "description": "Player login credentials",
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "username": {
+                "type": "string",
+                "description": "The player's username",
+                "example": "ash_ketchum"
+              },
+              "password": {
+                "type": "string",
+                "description": "The player's password",
+                "example": "SecureP@ss123"
+              }
+            },
+            "required": ["username", "password"]
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Login successful",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "UUIDv7 identifier for the player",
+                  "example": "0190a5b8-1234-7abc-8def-0123456789ab"
+                },
+                "username": {
+                  "type": "string",
+                  "description": "The player's username",
+                  "example": "ash_ketchum"
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Timestamp when the account was created",
+                  "example": "2025-12-18T10:30:00Z"
+                },
+                "token": {
+                  "type": "object",
+                  "description": "JWT authentication tokens",
+                  "properties": {
+                    "access": {
+                      "type": "string",
+                      "description": "JWT access token for authenticating API requests",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    },
+                    "refresh": {
+                      "type": "string",
+                      "description": "JWT refresh token for obtaining new access tokens",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                  },
+                  "required": ["access", "refresh"]
+                }
+              },
+              "required": ["id", "username", "created_at", "token"]
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Invalid credentials or account disabled",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "description": "Error message",
+                  "example": "Invalid credentials."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "auth_refresh_create": {
+    "description": "Exchanges a valid refresh token for a new access token. Use this endpoint when the access token has expired.",
+    "requestBody": {
+      "description": "Refresh token payload",
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "refresh": {
+                "type": "string",
+                "description": "A valid JWT refresh token obtained from login or register",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+              }
+            },
+            "required": ["refresh"]
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Token refreshed successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "access": {
+                  "type": "string",
+                  "description": "New JWT access token",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                },
+                "refresh": {
+                  "type": "string",
+                  "description": "New JWT refresh token (if rotation is enabled)",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                }
+              },
+              "required": ["access"]
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Invalid or expired refresh token",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "description": "Error message",
+                  "example": "Token is invalid or expired"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "players_me_retrieve": {
+    "description": "Retrieves the profile of the currently authenticated player, including their battle statistics and active Pokemon.",
+    "responses": {
+      "200": {
+        "description": "Player profile retrieved successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "UUIDv7 identifier for the player",
+                  "example": "0190a5b8-1234-7abc-8def-0123456789ab"
+                },
+                "username": {
+                  "type": "string",
+                  "description": "The player's username",
+                  "example": "ash_ketchum"
+                },
+                "wins": {
+                  "type": "integer",
+                  "description": "Total number of battles won",
+                  "example": 42
+                },
+                "losses": {
+                  "type": "integer",
+                  "description": "Total number of battles lost",
+                  "example": 10
+                },
+                "win_rate": {
+                  "type": "number",
+                  "format": "float",
+                  "description": "Win rate percentage calculated as (wins / total_games) * 100",
+                  "example": 80.77
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Timestamp when the account was created",
+                  "example": "2025-12-18T10:30:00Z"
+                },
+                "active_pokemon": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "The player's currently active Pokemon, or null if none is set",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "UUIDv7 identifier for the Pokemon"
+                    },
+                    "pokedex_number": {
+                      "type": "integer",
+                      "description": "Pokedex number of the Pokemon"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the Pokemon"
+                    },
+                    "sprite_url": {
+                      "type": "string",
+                      "format": "uri",
+                      "description": "URL to the Pokemon's sprite image"
+                    },
+                    "base_hp": {
+                      "type": "integer",
+                      "description": "Base HP stat"
+                    },
+                    "base_attack": {
+                      "type": "integer",
+                      "description": "Base attack stat"
+                    },
+                    "base_defense": {
+                      "type": "integer",
+                      "description": "Base defense stat"
+                    },
+                    "base_speed": {
+                      "type": "integer",
+                      "description": "Base speed stat"
+                    },
+                    "primary_type": {
+                      "type": "object",
+                      "description": "Primary type of the Pokemon",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "secondary_type": {
+                      "type": "object",
+                      "nullable": true,
+                      "description": "Secondary type of the Pokemon, or null if the Pokemon has only one type"
+                    }
+                  }
+                }
+              },
+              "required": ["id", "username", "wins", "losses", "win_rate", "created_at"]
+            }
+          }
+        }
+      }
+    }
+  },
+  "players_me_update": {
+    "description": "Updates the currently authenticated player's profile. Currently supports updating the active Pokemon.",
+    "requestBody": {
+      "description": "Player update payload",
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "active_pokemon": {
+                "type": "string",
+                "format": "uuid",
+                "nullable": true,
+                "description": "UUID of the PlayerPokemon to set as active, or null to clear the active Pokemon",
+                "example": "0190a5b8-1234-7abc-8def-0123456789ab"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Player profile updated successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "UUIDv7 identifier for the player"
+                },
+                "username": {
+                  "type": "string",
+                  "description": "The player's username"
+                },
+                "wins": {
+                  "type": "integer",
+                  "description": "Total number of battles won"
+                },
+                "losses": {
+                  "type": "integer",
+                  "description": "Total number of battles lost"
+                },
+                "win_rate": {
+                  "type": "number",
+                  "format": "float",
+                  "description": "Win rate percentage"
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Timestamp when the account was created"
+                },
+                "active_pokemon": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "UUID of the active Pokemon, or null"
+                }
+              },
+              "required": ["id", "username", "wins", "losses", "win_rate", "created_at"]
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Validation error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "active_pokemon": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Validation errors for active_pokemon field",
+                  "example": ["PlayerPokemon does not belong to you."]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "pokemon_list": {
+    "description": "Retrieves a paginated list of Pokemon from the database with filtering capabilities. The list is ordered by Pokedex number.",
+    "parameters": [
+      {
+        "name": "type",
+        "in": "query",
+        "description": "Filter Pokemon by type name (matches primary or secondary type)",
+        "schema": { "type": "string", "example": "fire" },
+        "queryparam_type": "filter_fields"
+      },
+      {
+        "name": "page",
+        "in": "query",
+        "description": "Page number to retrieve",
+        "schema": { "type": "integer", "example": 1 },
+        "queryparam_type": "pagination_fields"
+      },
+      {
+        "name": "page_size",
+        "in": "query",
+        "description": "Number of items per page",
+        "schema": { "type": "integer", "example": 20 },
+        "queryparam_type": "pagination_fields"
+      }
+    ],
+    "append_fields": ["parameters"],
+    "responses": {
+      "200": {
+        "description": "Paginated list of Pokemon",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "description": "Total number of Pokemon across all pages",
+                  "example": 151
+                },
+                "next": {
+                  "type": "string",
+                  "nullable": true,
+                  "format": "uri",
+                  "description": "URL to the next page, or null if there is no next page"
+                },
+                "previous": {
+                  "type": "string",
+                  "nullable": true,
+                  "format": "uri",
+                  "description": "URL to the previous page, or null if there is no previous page"
+                },
+                "results": {
+                  "type": "array",
+                  "description": "List of Pokemon",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "UUIDv7 identifier for the Pokemon"
+                      },
+                      "pokedex_number": {
+                        "type": "integer",
+                        "description": "Pokedex number",
+                        "example": 1
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Pokemon name",
+                        "example": "Bulbasaur"
+                      },
+                      "sprite_url": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "URL to the Pokemon's sprite image"
+                      },
+                      "primary_type_name": {
+                        "type": "string",
+                        "description": "Primary type name",
+                        "example": "grass"
+                      },
+                      "secondary_type_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Secondary type name, or null if the Pokemon has only one type",
+                        "example": "poison"
+                      }
+                    },
+                    "required": ["id", "pokedex_number", "name", "sprite_url", "primary_type_name"]
+                  }
+                }
+              },
+              "required": ["count", "results"]
+            }
+          }
+        }
+      }
+    }
+  },
+  "pokemon_retrieve": {
+    "description": "Retrieves detailed information about a specific Pokemon by its UUID. The id path parameter identifies the Pokemon.",
+    "responses": {
+      "200": {
+        "description": "Pokemon details retrieved successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "UUIDv7 identifier for the Pokemon"
+                },
+                "pokedex_number": {
+                  "type": "integer",
+                  "description": "Pokedex number",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Pokemon name",
+                  "example": "Bulbasaur"
+                },
+                "sprite_url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "URL to the Pokemon's sprite image"
+                },
+                "base_hp": {
+                  "type": "integer",
+                  "description": "Base HP stat",
+                  "example": 45
+                },
+                "base_attack": {
+                  "type": "integer",
+                  "description": "Base attack stat",
+                  "example": 49
+                },
+                "base_defense": {
+                  "type": "integer",
+                  "description": "Base defense stat",
+                  "example": 49
+                },
+                "base_speed": {
+                  "type": "integer",
+                  "description": "Base speed stat",
+                  "example": 45
+                },
+                "primary_type": {
+                  "type": "object",
+                  "description": "Primary type information",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "grass"
+                    }
+                  }
+                },
+                "secondary_type": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "Secondary type information, or null if the Pokemon has only one type",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "poison"
+                    }
+                  }
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Timestamp when the Pokemon was added to the database"
+                }
+              },
+              "required": ["id", "pokedex_number", "name", "sprite_url", "base_hp", "base_attack", "base_defense", "base_speed", "primary_type", "created_at"]
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Pokemon not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "description": "Error message",
+                  "example": "Not found."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "pokemon_starters_retrieve": {
+    "description": "Retrieves starter Pokemon options - one Pokemon per primary type, ordered by Pokedex number. This endpoint returns the lowest Pokedex number Pokemon for each primary type.",
+    "responses": {
+      "200": {
+        "description": "List of starter Pokemon",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "description": "List of starter Pokemon (one per primary type)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "UUIDv7 identifier for the Pokemon"
+                  },
+                  "pokedex_number": {
+                    "type": "integer",
+                    "description": "Pokedex number"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Pokemon name"
+                  },
+                  "sprite_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL to the Pokemon's sprite image"
+                  },
+                  "primary_type_name": {
+                    "type": "string",
+                    "description": "Primary type name"
+                  },
+                  "secondary_type_name": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Secondary type name, or null"
+                  }
+                },
+                "required": ["id", "pokedex_number", "name", "sprite_url", "primary_type_name"]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "pokemon_types_list": {
+    "description": "Retrieves a list of all Pokemon types available in the database. This endpoint is cached for 15 minutes.",
+    "responses": {
+      "200": {
+        "description": "List of Pokemon types",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "description": "List of all Pokemon types",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "UUIDv7 identifier for the type"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Type name",
+                    "example": "fire"
+                  }
+                },
+                "required": ["id", "name"]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "pokemon_type_effectiveness_list": {
+    "description": "Retrieves a list of type effectiveness multipliers showing how effective each type is against other types. This endpoint is cached for 15 minutes.",
+    "parameters": [
+      {
+        "name": "attacker",
+        "in": "query",
+        "description": "Filter by attacker type name",
+        "schema": { "type": "string", "example": "fire" },
+        "queryparam_type": "filter_fields"
+      },
+      {
+        "name": "defender",
+        "in": "query",
+        "description": "Filter by defender type name",
+        "schema": { "type": "string", "example": "grass" },
+        "queryparam_type": "filter_fields"
+      }
+    ],
+    "append_fields": ["parameters"],
+    "responses": {
+      "200": {
+        "description": "List of type effectiveness entries",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "description": "List of type effectiveness multipliers",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "UUIDv7 identifier for the type effectiveness entry"
+                  },
+                  "attacker_type_name": {
+                    "type": "string",
+                    "description": "Name of the attacking type",
+                    "example": "fire"
+                  },
+                  "defender_type_name": {
+                    "type": "string",
+                    "description": "Name of the defending type",
+                    "example": "grass"
+                  },
+                  "multiplier": {
+                    "type": "string",
+                    "description": "Damage multiplier (e.g., '2.00' for super effective, '0.50' for not very effective, '1.00' for normal)",
+                    "example": "2.00"
+                  }
+                },
+                "required": ["id", "attacker_type_name", "defender_type_name", "multiplier"]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "pokemon_pokeapi_list_pokemon_retrieve": {
+    "description": "Retrieves a paginated list of Pokemon from PokeAPI. Pokemon are fetched from the external API if not already in the database, then returned from the local database. This endpoint is throttled to 60 requests per minute.",
+    "parameters": [
+      {
+        "name": "offset",
+        "in": "query",
+        "description": "Starting index for pagination (default: 0)",
+        "schema": { "type": "integer", "example": 0, "default": 0 },
+        "queryparam_type": "pagination_fields"
+      },
+      {
+        "name": "limit",
+        "in": "query",
+        "description": "Number of results to return (default: 20, max: 50)",
+        "schema": { "type": "integer", "example": 20, "default": 20, "maximum": 50 },
+        "queryparam_type": "pagination_fields"
+      }
+    ],
+    "append_fields": ["parameters"],
+    "responses": {
+      "200": {
+        "description": "Paginated list of Pokemon from PokeAPI",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "description": "Total number of Pokemon available (approximately 1025)",
+                  "example": 1025
+                },
+                "offset": {
+                  "type": "integer",
+                  "description": "Current offset value",
+                  "example": 0
+                },
+                "limit": {
+                  "type": "integer",
+                  "description": "Number of items in this response",
+                  "example": 20
+                },
+                "results": {
+                  "type": "array",
+                  "description": "List of Pokemon",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "pokedex_number": {
+                        "type": "integer",
+                        "description": "Pokedex number",
+                        "example": 1
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Pokemon name",
+                        "example": "bulbasaur"
+                      },
+                      "sprite_url": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "URL to the Pokemon's sprite image"
+                      },
+                      "primary_type_name": {
+                        "type": "string",
+                        "description": "Primary type name",
+                        "example": "grass"
+                      },
+                      "secondary_type_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Secondary type name, or null",
+                        "example": "poison"
+                      },
+                      "base_hp": {
+                        "type": "integer",
+                        "description": "Base HP stat",
+                        "example": 45
+                      },
+                      "base_attack": {
+                        "type": "integer",
+                        "description": "Base attack stat",
+                        "example": 49
+                      },
+                      "base_defense": {
+                        "type": "integer",
+                        "description": "Base defense stat",
+                        "example": 49
+                      },
+                      "base_speed": {
+                        "type": "integer",
+                        "description": "Base speed stat",
+                        "example": 45
+                      }
+                    },
+                    "required": ["pokedex_number", "name", "sprite_url", "primary_type_name", "base_hp", "base_attack", "base_defense", "base_speed"]
+                  }
+                }
+              },
+              "required": ["count", "offset", "limit", "results"]
+            }
+          }
+        }
+      }
+    }
+  },
+  "pokemon_pokeapi_search_retrieve": {
+    "description": "Searches for a Pokemon from PokeAPI by name or Pokedex number. The search path parameter can be either a Pokemon name (case-insensitive) or a Pokedex number. If found, the Pokemon is created or retrieved from the local database and returned. This endpoint is throttled to 60 requests per minute.",
+    "responses": {
+      "200": {
+        "description": "Pokemon found and returned",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "nullable": true,
+                  "description": "Pokemon data if found, or null if not found",
+                  "properties": {
+                    "pokedex_number": {
+                      "type": "integer",
+                      "description": "Pokedex number",
+                      "example": 25
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Pokemon name",
+                      "example": "pikachu"
+                    },
+                    "sprite_url": {
+                      "type": "string",
+                      "format": "uri",
+                      "description": "URL to the Pokemon's sprite image"
+                    },
+                    "primary_type_name": {
+                      "type": "string",
+                      "description": "Primary type name",
+                      "example": "electric"
+                    },
+                    "secondary_type_name": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Secondary type name, or null"
+                    },
+                    "base_hp": {
+                      "type": "integer",
+                      "description": "Base HP stat",
+                      "example": 35
+                    },
+                    "base_attack": {
+                      "type": "integer",
+                      "description": "Base attack stat",
+                      "example": 55
+                    },
+                    "base_defense": {
+                      "type": "integer",
+                      "description": "Base defense stat",
+                      "example": 40
+                    },
+                    "base_speed": {
+                      "type": "integer",
+                      "description": "Base speed stat",
+                      "example": 90
+                    }
+                  },
+                  "required": ["pokedex_number", "name", "sprite_url", "primary_type_name", "base_hp", "base_attack", "base_defense", "base_speed"]
+                }
+              },
+              "required": ["data"]
+            }
+          }
+        }
+      }
+    }
+  },
+  "pokemon_pokeapi_choices_retrieve": {
+    "description": "Retrieves the first 20 Pokemon from the database, ordered by Pokedex number. This endpoint is cached for 15 minutes and is useful for providing quick Pokemon selection options.",
+    "responses": {
+      "200": {
+        "description": "List of Pokemon choices",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "description": "List of up to 20 Pokemon",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "UUIDv7 identifier for the Pokemon"
+                  },
+                  "pokedex_number": {
+                    "type": "integer",
+                    "description": "Pokedex number"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Pokemon name"
+                  },
+                  "sprite_url": {
+                    "type": "string",
+                    "format": "uri",
+                    "description": "URL to the Pokemon's sprite image"
+                  },
+                  "primary_type_name": {
+                    "type": "string",
+                    "description": "Primary type name"
+                  },
+                  "secondary_type_name": {
+                    "type": "string",
+                    "nullable": true,
+                    "description": "Secondary type name, or null"
+                  }
+                },
+                "required": ["id", "pokedex_number", "name", "sprite_url", "primary_type_name"]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "pokemon_me_list": {
+    "description": "Retrieves a paginated list of all Pokemon owned by the currently authenticated player, ordered by most recently added first.",
+    "parameters": [
+      {
+        "name": "page",
+        "in": "query",
+        "description": "Page number to retrieve",
+        "schema": { "type": "integer", "example": 1 },
+        "queryparam_type": "pagination_fields"
+      },
+      {
+        "name": "page_size",
+        "in": "query",
+        "description": "Number of items per page",
+        "schema": { "type": "integer", "example": 20 },
+        "queryparam_type": "pagination_fields"
+      }
+    ],
+    "append_fields": ["parameters"],
+    "responses": {
+      "200": {
+        "description": "Paginated list of player's Pokemon",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "description": "Total number of Pokemon owned by the player",
+                  "example": 5
+                },
+                "next": {
+                  "type": "string",
+                  "nullable": true,
+                  "format": "uri",
+                  "description": "URL to the next page, or null if there is no next page"
+                },
+                "previous": {
+                  "type": "string",
+                  "nullable": true,
+                  "format": "uri",
+                  "description": "URL to the previous page, or null if there is no previous page"
+                },
+                "results": {
+                  "type": "array",
+                  "description": "List of Pokemon owned by the player",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "UUIDv7 identifier for the Pokemon"
+                      },
+                      "pokedex_number": {
+                        "type": "integer",
+                        "description": "Pokedex number"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Pokemon name"
+                      },
+                      "sprite_url": {
+                        "type": "string",
+                        "format": "uri",
+                        "description": "URL to the Pokemon's sprite image"
+                      },
+                      "primary_type_name": {
+                        "type": "string",
+                        "description": "Primary type name"
+                      },
+                      "secondary_type_name": {
+                        "type": "string",
+                        "nullable": true,
+                        "description": "Secondary type name, or null"
+                      },
+                      "player_pokemon_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "UUIDv7 identifier for the PlayerPokemon relationship"
+                      }
+                    },
+                    "required": ["id", "pokedex_number", "name", "sprite_url", "primary_type_name", "player_pokemon_id"]
+                  }
+                }
+              },
+              "required": ["count", "results"]
+            }
+          }
+        }
+      }
+    }
+  },
+  "pokemon_me_create": {
+    "description": "Adds a Pokemon to the currently authenticated player's collection. The player can only own a number of Pokemon equal to their win count (plus one for their first Pokemon).",
+    "requestBody": {
+      "description": "Pokemon addition payload",
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "pokemon_id": {
+                "type": "string",
+                "format": "uuid",
+                "description": "UUID of the Pokemon to add to the player's collection",
+                "example": "0190a5b8-1234-7abc-8def-0123456789ab"
+              }
+            },
+            "required": ["pokemon_id"]
+          }
+        }
+      }
+    },
+    "responses": {
+      "201": {
+        "description": "Pokemon added to player's collection successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "UUIDv7 identifier for the Pokemon"
+                },
+                "pokedex_number": {
+                  "type": "integer",
+                  "description": "Pokedex number"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Pokemon name"
+                },
+                "sprite_url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "URL to the Pokemon's sprite image"
+                },
+                "primary_type_name": {
+                  "type": "string",
+                  "description": "Primary type name"
+                },
+                "secondary_type_name": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Secondary type name, or null"
+                }
+              },
+              "required": ["id", "pokedex_number", "name", "sprite_url", "primary_type_name"]
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Validation error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "pokemon_id": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Validation errors",
+                  "example": ["You already own this pokemon.", "Invalid pk \"...\" - object does not exist."]
+                },
+                "non_field_errors": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Cross-field validation errors",
+                  "example": ["You can only have up to X pokemon (based on your wins). You currently have Y pokemon."]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "pokemon_me_destroy": {
+    "description": "Removes a Pokemon from the currently authenticated player's collection. The id path parameter identifies the PlayerPokemon relationship to delete.",
+    "responses": {
+      "204": {
+        "description": "Pokemon removed from player's collection successfully"
+      },
+      "404": {
+        "description": "PlayerPokemon not found or does not belong to the player",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "description": "Error message",
+                  "example": "Not found."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "battle_create": {
+    "description": "Creates a new battle. The player can battle against an AI opponent (by omitting opponent_id) or against another player (by providing opponent_id). The player must have an active Pokemon to start a battle, and cannot have an active battle already in progress.",
+    "requestBody": {
+      "description": "Battle creation payload",
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "opponent_id": {
+                "type": "string",
+                "format": "uuid",
+                "nullable": true,
+                "description": "UUID of the opponent player (optional, defaults to AI opponent if not provided)",
+                "example": "0190a5b8-1234-7abc-8def-0123456789ab"
+              },
+              "pokemon_id": {
+                "type": "string",
+                "format": "uuid",
+                "nullable": true,
+                "description": "UUID of the PlayerPokemon to use in battle (optional, defaults to active Pokemon if not provided)",
+                "example": "0190a5b8-1234-7abc-8def-0123456789ab"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "201": {
+        "description": "Battle created successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "UUIDv7 identifier for the battle"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Battle status",
+                  "enum": ["pending", "active", "completed", "cancelled"],
+                  "example": "active"
+                },
+                "player1": {
+                  "type": "object",
+                  "description": "First player information",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "pokemon": {
+                      "type": "object",
+                      "description": "Player 1's Pokemon in battle",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "primary_type": {
+                          "type": "string"
+                        },
+                        "secondary_type": {
+                          "type": "string",
+                          "nullable": true
+                        },
+                        "current_hp": {
+                          "type": "integer"
+                        },
+                        "max_hp": {
+                          "type": "integer"
+                        },
+                        "sprite_url": {
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      }
+                    }
+                  }
+                },
+                "player2": {
+                  "type": "object",
+                  "description": "Second player information (opponent)",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "pokemon": {
+                      "type": "object",
+                      "description": "Player 2's Pokemon in battle"
+                    }
+                  }
+                },
+                "current_turn": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "UUID of the player whose turn it is"
+                },
+                "turn_number": {
+                  "type": "integer",
+                  "description": "Current turn number",
+                  "example": 1
+                },
+                "turns": {
+                  "type": "array",
+                  "description": "List of battle turns",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "winner_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "UUID of the winner, or null if battle is not completed"
+                },
+                "player1_potions": {
+                  "type": "integer",
+                  "description": "Number of potions available to player 1",
+                  "example": 3
+                },
+                "player1_x_attack": {
+                  "type": "integer",
+                  "description": "Number of X-Attack items available to player 1",
+                  "example": 2
+                },
+                "player1_x_defense": {
+                  "type": "integer",
+                  "description": "Number of X-Defense items available to player 1",
+                  "example": 2
+                },
+                "player2_potions": {
+                  "type": "integer",
+                  "description": "Number of potions available to player 2"
+                },
+                "player2_x_attack": {
+                  "type": "integer",
+                  "description": "Number of X-Attack items available to player 2"
+                },
+                "player2_x_defense": {
+                  "type": "integer",
+                  "description": "Number of X-Defense items available to player 2"
+                },
+                "player1_attack_boost": {
+                  "type": "integer",
+                  "description": "Attack boost level for player 1 (0-3)",
+                  "example": 0
+                },
+                "player1_defense_boost": {
+                  "type": "integer",
+                  "description": "Defense boost level for player 1 (0-3)",
+                  "example": 0
+                },
+                "player2_attack_boost": {
+                  "type": "integer",
+                  "description": "Attack boost level for player 2 (0-3)"
+                },
+                "player2_defense_boost": {
+                  "type": "integer",
+                  "description": "Defense boost level for player 2 (0-3)"
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Timestamp when the battle was created"
+                },
+                "completed_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Timestamp when the battle was completed, or null if not completed"
+                }
+              },
+              "required": ["id", "status", "player1", "player2", "current_turn", "turn_number", "turns"]
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Validation error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "opponent_id": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Validation errors for opponent_id",
+                  "example": ["Opponent not found."]
+                },
+                "pokemon_id": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Validation errors for pokemon_id",
+                  "example": ["Pokemon does not belong to you."]
+                },
+                "non_field_errors": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Cross-field validation errors",
+                  "example": ["You already have an active battle.", "You must have an active Pokemon to start a battle."]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "battle_retrieve": {
+    "description": "Retrieves the current state of a battle. The id path parameter identifies the battle. The response includes detailed information about both players, their Pokemon, current HP, items, and all battle turns.",
+    "responses": {
+      "200": {
+        "description": "Battle state retrieved successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "UUIDv7 identifier for the battle"
+                },
+                "status": {
+                  "type": "string",
+                  "description": "Battle status",
+                  "enum": ["pending", "active", "completed", "cancelled"],
+                  "example": "active"
+                },
+                "player1": {
+                  "type": "object",
+                  "description": "First player information"
+                },
+                "player2": {
+                  "type": "object",
+                  "description": "Second player information"
+                },
+                "current_turn": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "UUID of the player whose turn it is"
+                },
+                "turn_number": {
+                  "type": "integer",
+                  "description": "Current turn number"
+                },
+                "turns": {
+                  "type": "array",
+                  "description": "List of battle turns with action details",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "turn_number": {
+                        "type": "integer",
+                        "description": "Turn number"
+                      },
+                      "player_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "UUID of the player who made this action"
+                      },
+                      "action": {
+                        "type": "string",
+                        "enum": ["attack", "defend"],
+                        "description": "Action taken"
+                      },
+                      "damage": {
+                        "type": "integer",
+                        "description": "Damage dealt (0 if defend or miss)"
+                      },
+                      "is_critical": {
+                        "type": "boolean",
+                        "description": "Whether this was a critical hit"
+                      },
+                      "is_super_effective": {
+                        "type": "boolean",
+                        "description": "Whether this was super effective"
+                      },
+                      "message": {
+                        "type": "string",
+                        "description": "Turn message/description"
+                      }
+                    }
+                  }
+                },
+                "winner_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "UUID of the winner, or null if battle is not completed"
+                },
+                "player1_potions": {
+                  "type": "integer",
+                  "description": "Number of potions available to player 1"
+                },
+                "player1_x_attack": {
+                  "type": "integer",
+                  "description": "Number of X-Attack items available to player 1"
+                },
+                "player1_x_defense": {
+                  "type": "integer",
+                  "description": "Number of X-Defense items available to player 1"
+                },
+                "player2_potions": {
+                  "type": "integer",
+                  "description": "Number of potions available to player 2"
+                },
+                "player2_x_attack": {
+                  "type": "integer",
+                  "description": "Number of X-Attack items available to player 2"
+                },
+                "player2_x_defense": {
+                  "type": "integer",
+                  "description": "Number of X-Defense items available to player 2"
+                },
+                "player1_attack_boost": {
+                  "type": "integer",
+                  "description": "Attack boost level for player 1 (0-3)"
+                },
+                "player1_defense_boost": {
+                  "type": "integer",
+                  "description": "Defense boost level for player 1 (0-3)"
+                },
+                "player2_attack_boost": {
+                  "type": "integer",
+                  "description": "Attack boost level for player 2 (0-3)"
+                },
+                "player2_defense_boost": {
+                  "type": "integer",
+                  "description": "Defense boost level for player 2 (0-3)"
+                },
+                "created_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Timestamp when the battle was created"
+                },
+                "completed_at": {
+                  "type": "string",
+                  "format": "date-time",
+                  "nullable": true,
+                  "description": "Timestamp when the battle was completed, or null if not completed"
+                }
+              },
+              "required": ["id", "status", "player1", "player2", "current_turn", "turn_number", "turns"]
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Battle not found or does not belong to the player",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "description": "Error message",
+                  "example": "Not found."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "battle_list": {
+    "description": "Retrieves a paginated list of all battles involving the currently authenticated player, ordered by most recent first.",
+    "parameters": [
+      {
+        "name": "page",
+        "in": "query",
+        "description": "Page number to retrieve",
+        "schema": { "type": "integer", "example": 1 },
+        "queryparam_type": "pagination_fields"
+      },
+      {
+        "name": "page_size",
+        "in": "query",
+        "description": "Number of items per page",
+        "schema": { "type": "integer", "example": 20 },
+        "queryparam_type": "pagination_fields"
+      }
+    ],
+    "append_fields": ["parameters"],
+    "responses": {
+      "200": {
+        "description": "Paginated list of battles",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "description": "Total number of battles",
+                  "example": 10
+                },
+                "next": {
+                  "type": "string",
+                  "nullable": true,
+                  "format": "uri",
+                  "description": "URL to the next page, or null if there is no next page"
+                },
+                "previous": {
+                  "type": "string",
+                  "nullable": true,
+                  "format": "uri",
+                  "description": "URL to the previous page, or null if there is no previous page"
+                },
+                "results": {
+                  "type": "array",
+                  "description": "List of battles",
+                  "items": {
+                    "type": "object",
+                    "description": "Battle state object (same structure as battle_retrieve)"
+                  }
+                }
+              },
+              "required": ["count", "results"]
+            }
+          }
+        }
+      }
+    }
+  },
+  "battle_turn_create": {
+    "description": "Submits a turn action (attack or defend) for the current player in an active battle. The id path parameter identifies the battle. The battle must be active and it must be the player's turn. After processing, the AI opponent's turn is automatically processed if the battle is still active.",
+    "requestBody": {
+      "description": "Turn action payload",
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "action": {
+                "type": "string",
+                "enum": ["attack", "defend"],
+                "description": "Action to take in this turn",
+                "example": "attack"
+              }
+            },
+            "required": ["action"]
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Turn processed successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "description": "Battle state if battle is still active",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["active"]
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "description": "Battle completion response if battle ended",
+                  "properties": {
+                    "battle": {
+                      "type": "object",
+                      "description": "Final battle state"
+                    },
+                    "winner": {
+                      "type": "string",
+                      "format": "uuid",
+                      "nullable": true,
+                      "description": "UUID of the winner, or null if draw"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Completion message",
+                      "example": "ash_ketchum wins!"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Validation error or invalid battle state",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "action": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Validation errors for action field"
+                },
+                "non_field_errors": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Battle state errors",
+                  "example": ["It is not your turn.", "Battle is not active.", "Battle has already been completed."]
+                }
+              }
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Battle not found or does not belong to the player",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "description": "Error message",
+                  "example": "Not found."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "battle_use_item_create": {
+    "description": "Uses a battle item (potion, X-Attack, or X-Defense) during an active battle. The id path parameter identifies the battle. The player must have the item in their inventory and it must be their turn.",
+    "requestBody": {
+      "description": "Item use payload",
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "item_type": {
+                "type": "string",
+                "enum": ["potion", "x_attack", "x_defense"],
+                "description": "Type of item to use",
+                "example": "potion"
+              }
+            },
+            "required": ["item_type"]
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Item used successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "description": "Whether the item was used successfully",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Message describing the result",
+                  "example": "Used Potion! Restored 50 HP."
+                },
+                "hp_restored": {
+                  "type": "integer",
+                  "description": "Amount of HP restored (for potions)",
+                  "example": 50
+                },
+                "new_hp": {
+                  "type": "integer",
+                  "description": "New HP value after using the item",
+                  "example": 95
+                },
+                "boost_turns_remaining": {
+                  "type": "integer",
+                  "description": "Number of turns the boost will last (for X-Attack/X-Defense)",
+                  "example": 3
+                },
+                "inventory": {
+                  "type": "object",
+                  "description": "Updated inventory counts",
+                  "properties": {
+                    "potions": {
+                      "type": "integer",
+                      "description": "Remaining potions"
+                    },
+                    "x_attack": {
+                      "type": "integer",
+                      "description": "Remaining X-Attack items"
+                    },
+                    "x_defense": {
+                      "type": "integer",
+                      "description": "Remaining X-Defense items"
+                    }
+                  }
+                }
+              },
+              "required": ["success", "message", "inventory"]
+            }
+          }
+        }
+      },
+      "400": {
+        "description": "Validation error or invalid battle state",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "item_type": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Validation errors for item_type field"
+                },
+                "non_field_errors": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Battle state or inventory errors",
+                  "example": ["It is not your turn.", "Battle is not active.", "You don't have any potions left.", "Your Pokemon is already at full HP."]
+                }
+              }
+            }
+          }
+        }
+      },
+      "404": {
+        "description": "Battle not found or does not belong to the player",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "description": "Error message",
+                  "example": "Not found."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "battle_history_list": {
+    "description": "Retrieves a paginated list of completed battles for the currently authenticated player, ordered by most recent first. This endpoint only returns battles where the player participated.",
+    "parameters": [
+      {
+        "name": "page",
+        "in": "query",
+        "description": "Page number to retrieve",
+        "schema": { "type": "integer", "example": 1 },
+        "queryparam_type": "pagination_fields"
+      },
+      {
+        "name": "page_size",
+        "in": "query",
+        "description": "Number of items per page",
+        "schema": { "type": "integer", "example": 20 },
+        "queryparam_type": "pagination_fields"
+      }
+    ],
+    "append_fields": ["parameters"],
+    "responses": {
+      "200": {
+        "description": "Paginated list of battle history",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "description": "Total number of completed battles",
+                  "example": 15
+                },
+                "next": {
+                  "type": "string",
+                  "nullable": true,
+                  "format": "uri",
+                  "description": "URL to the next page, or null if there is no next page"
+                },
+                "previous": {
+                  "type": "string",
+                  "nullable": true,
+                  "format": "uri",
+                  "description": "URL to the previous page, or null if there is no previous page"
+                },
+                "results": {
+                  "type": "array",
+                  "description": "List of completed battles",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "UUIDv7 identifier for the battle"
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": ["completed"],
+                        "description": "Battle status"
+                      },
+                      "opponent": {
+                        "type": "object",
+                        "description": "Opponent player information",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "description": "UUIDv7 identifier for the opponent"
+                          },
+                          "username": {
+                            "type": "string",
+                            "description": "Opponent's username"
+                          }
+                        },
+                        "required": ["id", "username"]
+                      },
+                      "winner_id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "nullable": true,
+                        "description": "UUID of the winner, or null if draw"
+                      },
+                      "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "Timestamp when the battle was created"
+                      },
+                      "completed_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true,
+                        "description": "Timestamp when the battle was completed"
+                      }
+                    },
+                    "required": ["id", "status", "opponent", "created_at"]
+                  }
+                }
+              },
+              "required": ["count", "results"]
+            }
+          }
+        }
+      }
+    }
+  },
+  "auth_create": {
+    "description": "Base endpoint for the auth viewset. This endpoint is auto-generated by the DRF router but is not intended to be called directly. Use /api/auth/register/, /api/auth/login/, or /api/auth/refresh/ instead.",
+    "responses": {
+      "405": {
+        "description": "Method not allowed - use specific action endpoints instead",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "detail": {
+                  "type": "string",
+                  "description": "Error message",
+                  "example": "Method \"POST\" not allowed."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

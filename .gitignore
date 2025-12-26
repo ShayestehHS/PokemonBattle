@@ -59,7 +59,7 @@ secrets/
 !.env.example
 
 # Generated docs (built by CI)
-site/
+# Note: site/ is included for drf-to-mkdoc documentation hosting
 backend/docs/models/
 backend/docs/model-docs.json
 

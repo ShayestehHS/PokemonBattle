@@ -1,9 +1,13 @@
+import logging
+
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
 
 from utils.exceptions.exceptions import FormError, ToastError
+
+logger = logging.getLogger(__name__)
 
 
 def exception_handler(exc, context):
@@ -36,6 +40,12 @@ def exception_handler(exc, context):
             return exception_handler(ToastError(message=message, status_code=status_code), context)
 
     elif not isinstance(exc, FormError | ToastError):
+        # Log the exception before handling it
+        logger.exception(
+            f"Unhandled exception in {context.get('view', {}).__class__.__name__ if context.get('view') else 'unknown view'}: {exc}",
+            exc_info=exc,
+        )
+
         response = drf_exception_handler(exc, context)
         if response is not None:
             status_code = response.status_code
@@ -49,6 +59,12 @@ def exception_handler(exc, context):
                 else:
                     message = str(response_data) if response_data else "An error occurred"
                 return exception_handler(ToastError(message=message, status_code=status_code), context)
+
+        # Log 500 errors with full traceback
+        logger.error(
+            f"500 Internal Server Error in {context.get('view', {}).__class__.__name__ if context.get('view') else 'unknown view'}: {exc}",
+            exc_info=exc,
+        )
 
         return exception_handler(
             ToastError(

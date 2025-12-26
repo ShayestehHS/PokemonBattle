@@ -7,6 +7,7 @@ base_urlpatterns = [
     path("players/", include("players.urls", namespace="players")),
     path("pokemon/", include("pokemon.urls", namespace="pokemon")),
     path("battles/", include("battles.urls", namespace="battles")),
+    path("scoreboard/", include("scoreboard.urls", namespace="scoreboard")),
     path("health/", lambda request: JsonResponse({"status": "ok"}), name="health"),
 ]
 

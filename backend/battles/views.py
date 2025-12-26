@@ -1,9 +1,7 @@
 from django.db.models import Q
-from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin
+from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from battles.models import Battle
@@ -24,7 +22,7 @@ class BattleHistoryViewSet(ListModelMixin, GenericViewSet):
         return Battle.objects.for_player(self.request.user).order_by("-id")
 
 
-class BattleViewSet(CreateModelMixin, RetrieveModelMixin, ListModelMixin, GenericViewSet):
+class BattleViewSet(CreateModelMixin, RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -47,20 +45,22 @@ class BattleViewSet(CreateModelMixin, RetrieveModelMixin, ListModelMixin, Generi
             return BattleCreateSerializer
         elif self.action == "retrieve":
             return BattleStateSerializer
+        elif self.action == "turn":
+            return TurnSubmitSerializer
+        elif self.action == "use_item":
+            return ItemUseSerializer
         return BattleStateSerializer
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        if self.action in ["turn", "use_item"]:
+            context["battle"] = self.get_object()
+        return context
+
     @action(detail=True, methods=["post"])
-    def turn(self, request, pk=None):
-        battle = self.get_object()
-        serializer = TurnSubmitSerializer(data=request.data, context={"request": request, "battle": battle})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def turn(self, request, pk=None, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
 
     @action(detail=True, methods=["post"], url_path="use-item")
-    def use_item(self, request, pk=None):
-        battle = self.get_object()
-        serializer = ItemUseSerializer(data=request.data, context={"request": request, "battle": battle})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def use_item(self, request, pk=None, *args, **kwargs):
+        return super().update(request, *args, **kwargs)

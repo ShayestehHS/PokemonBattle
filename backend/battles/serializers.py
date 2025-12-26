@@ -152,8 +152,8 @@ class BattleCreateSerializer(serializers.Serializer):
 class TurnSubmitSerializer(serializers.Serializer):
     action = serializers.ChoiceField(choices=[BattleTurn.ACTION_ATTACK, BattleTurn.ACTION_DEFEND])
 
-    def create(self, validated_data):
-        battle = self.context["battle"]
+    def update(self, instance, validated_data):
+        battle = instance
         user = self.context["request"].user
         manager = BattleManager(battle, user)
         response = manager.process_turn(validated_data["action"])

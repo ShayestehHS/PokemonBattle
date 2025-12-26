@@ -1,6 +1,4 @@
 # docker-compose.yml (at project root)
-version: '3.8'
-
 networks:
   frontend-network:
     driver: bridge
@@ -10,16 +8,40 @@ networks:
 
 services:
   nginx:
+    container_name: pokemon-nginx
     build: ./nginx
     ports:
       - "80:80"
     networks:
       - frontend-network
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 50M
+          cpus: '3'
+
+  frontend:
+    container_name: pokemon-frontend
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: /api
+    networks:
+      - frontend-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 200M
 
   backend:
+    container_name: pokemon-backend
     build: ./backend
     environment:
       - DEBUG=${DEBUG:-false}
@@ -39,9 +61,20 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health/').read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 200M
 
   postgres:
+    container_name: pokemon-postgres
     image: postgres:17
     environment:
       - POSTGRES_DB=pokemon_battle
@@ -59,14 +92,23 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 100M
 
   redis:
+    container_name: pokemon-redis
     image: redis:7-alpine
     volumes:
       - redis_data:/data
     networks:
       - backend-network
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 200M
 
 secrets:
   django_secret_key:

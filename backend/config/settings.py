@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "players.apps.PlayersConfig",
     "pokemon.apps.PokemonConfig",
     "battles.apps.BattlesConfig",
+    "scoreboard.apps.ScoreboardConfig",
 ]
 
 MIDDLEWARE = [
@@ -77,7 +78,7 @@ DATABASES = {
         "PORT": os.environ.get("POSTGRES_PORT", "5432"),
     }
 }
-REDIS_URL = os.environ.get("REDIS_URL", "redis://redis:6379/0")
+REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 
 CACHES = {
     "default": {
@@ -124,7 +125,7 @@ REST_FRAMEWORK = {
         "pokeapi": "60/min",
     },
     "DEFAULT_SCHEMA_CLASS": "drf_to_mkdoc.utils.schema.AutoSchema",
-    "EXCEPTION_HANDLER": "utils.exception_handler.exception_handler",
+    "EXCEPTION_HANDLER": "utils.exceptions.exception_handler.exception_handler",
 }
 
 

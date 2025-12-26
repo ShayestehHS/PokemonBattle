@@ -1,0 +1,12 @@
+-r requirements.txt
+
+# Testing
+pytest>=8.0
+pytest-django>=4.8
+pytest-cov>=4.1
+
+# Linting & Formatting
+ruff>=0.3
+
+# Git hooks
+pre-commit>=3.6
