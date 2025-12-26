@@ -4,6 +4,13 @@
 import os
 import sys
 
+# Import coreapi compatibility shim before any other imports
+# This fixes coreapi compatibility with Python 3.13+
+try:
+    import utils.coreapi_compat  # noqa: F401
+except ImportError:
+    pass  # If utils doesn't exist yet, continue normally
+
 
 def main():
     """Run administrative tasks."""

@@ -68,16 +68,25 @@ TEMPLATES = [
     },
 ]
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB", "pokemon_battle"),
-        "USER": os.environ.get("POSTGRES_USER", "postgres"),
-        "PASSWORD": read_secret("db_password", "postgres"),
-        "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
-        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+# Use SQLite for documentation builds (no database setup required)
+if os.environ.get("BUILD_DOCS", "").lower() in ("true", "1", "yes"):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("POSTGRES_DB", "pokemon_battle"),
+            "USER": os.environ.get("POSTGRES_USER", "postgres"),
+            "PASSWORD": read_secret("db_password", "postgres"),
+            "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
+            "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        }
+    }
 REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
 
 CACHES = {
@@ -142,6 +151,8 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "A turn-based Pokemon battle simulation API",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+    "COMPONENT_NO_READ_ONLY_REQUIRED": False,
 }
 
 # CORS settings
@@ -150,13 +161,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
 ]
 CORS_ALLOW_CREDENTIALS = True
-DRF_TO_MKDOC = {
-    "DJANGO_APPS": [
-        "players",
-        "pokemon",
-    ],
-    "DOCS_DIR": "docs",
-}
+
 
 LOGGING = {
     "version": 1,

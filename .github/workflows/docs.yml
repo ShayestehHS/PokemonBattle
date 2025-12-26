@@ -32,6 +32,7 @@ jobs:
         env:
           DJANGO_SECRET_KEY: test-secret-key-for-ci
           DEBUG: 'true'
+          BUILD_DOCS: 'true'
         run: |
           python manage.py build_docs
 
