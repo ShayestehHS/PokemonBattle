@@ -1,0 +1,1924 @@
+{
+  "battles": {
+    "Battle": {
+      "abstract": false,
+      "app_label": "battles",
+      "column_fields": {
+        "completed_at": {
+          "blank": true,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "When the battle was completed",
+          "name": "completed_at",
+          "null": true,
+          "primary_key": false,
+          "type": "DateTimeField",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "completed at"
+        },
+        "created_at": {
+          "blank": true,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": false,
+          "field_specific": {
+            "auto_now_add": true
+          },
+          "help_text": "When the battle was created",
+          "name": "created_at",
+          "null": false,
+          "primary_key": false,
+          "type": "DateTimeField",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "created at"
+        },
+        "current_turn_player": {
+          "blank": false,
+          "choices": [],
+          "db_index": true,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Player whose turn it is",
+          "name": "current_turn_player",
+          "null": false,
+          "primary_key": false,
+          "type": "ForeignKey",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "current turn player"
+        },
+        "id": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "<callable: uuid7>",
+          "editable": false,
+          "field_specific": {
+            "max_length": 32
+          },
+          "help_text": "UUIDv7 primary key (time-sortable)",
+          "name": "id",
+          "null": false,
+          "primary_key": true,
+          "type": "UUIDField",
+          "unique": true,
+          "validators": [],
+          "verbose_name": "id"
+        },
+        "player1": {
+          "blank": false,
+          "choices": [],
+          "db_index": true,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "First player in the battle",
+          "name": "player1",
+          "null": false,
+          "primary_key": false,
+          "type": "ForeignKey",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "player1"
+        },
+        "player1_attack_boost": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "0",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Player 1's remaining attack boost turns",
+          "name": "player1_attack_boost",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "player1 attack boost"
+        },
+        "player1_current_hp": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Player 1's current HP",
+          "name": "player1_current_hp",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "player1 current hp"
+        },
+        "player1_defense_boost": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "0",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Player 1's remaining defense boost turns",
+          "name": "player1_defense_boost",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "player1 defense boost"
+        },
+        "player1_pokemon": {
+          "blank": false,
+          "choices": [],
+          "db_index": true,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Player 1's Pokemon in this battle",
+          "name": "player1_pokemon",
+          "null": false,
+          "primary_key": false,
+          "type": "ForeignKey",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "player1 pokemon"
+        },
+        "player1_potions": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "3",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Player 1's remaining potions",
+          "name": "player1_potions",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "player1 potions"
+        },
+        "player1_x_attack": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "1",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Player 1's remaining X-Attack items",
+          "name": "player1_x_attack",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "player1 x attack"
+        },
+        "player1_x_defense": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "1",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Player 1's remaining X-Defense items",
+          "name": "player1_x_defense",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "player1 x defense"
+        },
+        "player2": {
+          "blank": false,
+          "choices": [],
+          "db_index": true,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Second player in the battle (usually AI)",
+          "name": "player2",
+          "null": false,
+          "primary_key": false,
+          "type": "ForeignKey",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "player2"
+        },
+        "player2_attack_boost": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "0",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Player 2's remaining attack boost turns",
+          "name": "player2_attack_boost",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "player2 attack boost"
+        },
+        "player2_current_hp": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Player 2's current HP",
+          "name": "player2_current_hp",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "player2 current hp"
+        },
+        "player2_defense_boost": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "0",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Player 2's remaining defense boost turns",
+          "name": "player2_defense_boost",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "player2 defense boost"
+        },
+        "player2_pokemon": {
+          "blank": false,
+          "choices": [],
+          "db_index": true,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Player 2's Pokemon in this battle",
+          "name": "player2_pokemon",
+          "null": false,
+          "primary_key": false,
+          "type": "ForeignKey",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "player2 pokemon"
+        },
+        "player2_potions": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "3",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Player 2's remaining potions",
+          "name": "player2_potions",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "player2 potions"
+        },
+        "player2_x_attack": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "1",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Player 2's remaining X-Attack items",
+          "name": "player2_x_attack",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "player2 x attack"
+        },
+        "player2_x_defense": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "1",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Player 2's remaining X-Defense items",
+          "name": "player2_x_defense",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "player2 x defense"
+        },
+        "status": {
+          "blank": false,
+          "choices": [
+            {
+              "display": "Pending",
+              "value": "pending"
+            },
+            {
+              "display": "Active",
+              "value": "active"
+            },
+            {
+              "display": "Completed",
+              "value": "completed"
+            },
+            {
+              "display": "Cancelled",
+              "value": "cancelled"
+            }
+          ],
+          "db_index": false,
+          "default": "active",
+          "editable": true,
+          "field_specific": {
+            "max_length": 20
+          },
+          "help_text": "Battle status",
+          "name": "status",
+          "null": false,
+          "primary_key": false,
+          "type": "CharField",
+          "unique": false,
+          "validators": [
+            "MaxLengthValidator"
+          ],
+          "verbose_name": "status"
+        },
+        "turn_number": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "1",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Current turn number",
+          "name": "turn_number",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "turn number"
+        },
+        "winner": {
+          "blank": true,
+          "choices": [],
+          "db_index": true,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Winner of the battle (null if not completed)",
+          "name": "winner",
+          "null": true,
+          "primary_key": false,
+          "type": "ForeignKey",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "winner"
+        }
+      },
+      "description": "",
+      "meta_options": {
+        "default_permissions": "('add', 'change', 'delete', 'view')",
+        "indexes": "[<Index: fields=['player1', 'status'] name='battle_player1_status_idx'>, <Index: fields=['player2', 'status'] name='battle_player2_status_idx'>, <Index: fields=['status', '-created_at'] name='battle_status_created_idx'>]",
+        "managed": "True",
+        "ordering": "['-id']"
+      },
+      "methods": [
+        {
+          "docstring": "",
+          "name": "complete"
+        },
+        {
+          "docstring": "",
+          "name": "get_current_hp"
+        },
+        {
+          "docstring": "",
+          "name": "get_opponent"
+        },
+        {
+          "docstring": "",
+          "name": "get_player_pokemon"
+        },
+        {
+          "docstring": "",
+          "name": "is_player_turn"
+        },
+        {
+          "docstring": "",
+          "name": "set_current_hp"
+        }
+      ],
+      "name": "Battle",
+      "proxy": false,
+      "relationships": {
+        "current_turn_player": {
+          "app_label": "players",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": true,
+          "name": "current_turn_player",
+          "null": false,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "players.Player",
+          "related_name": null,
+          "table_name": "players",
+          "type": "ForeignKey",
+          "verbose_name": "Player"
+        },
+        "player1": {
+          "app_label": "players",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": true,
+          "name": "player1",
+          "null": false,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "players.Player",
+          "related_name": null,
+          "table_name": "players",
+          "type": "ForeignKey",
+          "verbose_name": "Player"
+        },
+        "player1_pokemon": {
+          "app_label": "pokemon",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": true,
+          "name": "player1_pokemon",
+          "null": false,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "pokemon.PlayerPokemon",
+          "related_name": null,
+          "table_name": "player_pokemon",
+          "type": "ForeignKey",
+          "verbose_name": "Player Pokemon"
+        },
+        "player2": {
+          "app_label": "players",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": true,
+          "name": "player2",
+          "null": false,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "players.Player",
+          "related_name": null,
+          "table_name": "players",
+          "type": "ForeignKey",
+          "verbose_name": "Player"
+        },
+        "player2_pokemon": {
+          "app_label": "pokemon",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": true,
+          "name": "player2_pokemon",
+          "null": false,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "pokemon.PlayerPokemon",
+          "related_name": null,
+          "table_name": "player_pokemon",
+          "type": "ForeignKey",
+          "verbose_name": "Player Pokemon"
+        },
+        "turns": {
+          "app_label": "battles",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": false,
+          "name": "turns",
+          "null": true,
+          "on_delete": "CASCADE",
+          "one_to_many": true,
+          "one_to_one": false,
+          "related_model": "battles.BattleTurn",
+          "related_name": "turns",
+          "table_name": "battle_turns",
+          "type": "ManyToOneRel",
+          "verbose_name": "Battle Turn"
+        },
+        "winner": {
+          "app_label": "players",
+          "blank": true,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": true,
+          "name": "winner",
+          "null": true,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "players.Player",
+          "related_name": null,
+          "table_name": "players",
+          "type": "ForeignKey",
+          "verbose_name": "Player"
+        }
+      },
+      "table_name": "battles",
+      "verbose_name": "Battle",
+      "verbose_name_plural": "Battles"
+    },
+    "BattleTurn": {
+      "abstract": false,
+      "app_label": "battles",
+      "column_fields": {
+        "action": {
+          "blank": false,
+          "choices": [
+            {
+              "display": "Attack",
+              "value": "attack"
+            },
+            {
+              "display": "Defend",
+              "value": "defend"
+            }
+          ],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {
+            "max_length": 10
+          },
+          "help_text": "Action taken (attack or defend)",
+          "name": "action",
+          "null": false,
+          "primary_key": false,
+          "type": "CharField",
+          "unique": false,
+          "validators": [
+            "MaxLengthValidator"
+          ],
+          "verbose_name": "action"
+        },
+        "battle": {
+          "blank": false,
+          "choices": [],
+          "db_index": true,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "The battle this turn belongs to",
+          "name": "battle",
+          "null": false,
+          "primary_key": false,
+          "type": "ForeignKey",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "battle"
+        },
+        "damage": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "0",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Damage dealt in this turn (0 if defend or miss)",
+          "name": "damage",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "damage"
+        },
+        "id": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "<callable: uuid7>",
+          "editable": false,
+          "field_specific": {
+            "max_length": 32
+          },
+          "help_text": "UUIDv7 primary key (time-sortable)",
+          "name": "id",
+          "null": false,
+          "primary_key": true,
+          "type": "UUIDField",
+          "unique": true,
+          "validators": [],
+          "verbose_name": "id"
+        },
+        "is_critical": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "False",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Whether this was a critical hit",
+          "name": "is_critical",
+          "null": false,
+          "primary_key": false,
+          "type": "BooleanField",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "is critical"
+        },
+        "is_super_effective": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "False",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Whether this was super effective",
+          "name": "is_super_effective",
+          "null": false,
+          "primary_key": false,
+          "type": "BooleanField",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "is super effective"
+        },
+        "message": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {
+            "max_length": 255
+          },
+          "help_text": "Turn message/description",
+          "name": "message",
+          "null": false,
+          "primary_key": false,
+          "type": "CharField",
+          "unique": false,
+          "validators": [
+            "MaxLengthValidator"
+          ],
+          "verbose_name": "message"
+        },
+        "player": {
+          "blank": false,
+          "choices": [],
+          "db_index": true,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "The player who made this action",
+          "name": "player",
+          "null": false,
+          "primary_key": false,
+          "type": "ForeignKey",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "player"
+        },
+        "turn_number": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "The turn number this action occurred on",
+          "name": "turn_number",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "turn number"
+        }
+      },
+      "description": "",
+      "meta_options": {
+        "default_permissions": "('add', 'change', 'delete', 'view')",
+        "indexes": "[<Index: fields=['battle', 'turn_number'] name='battle_turn_battle_turn_idx'>]",
+        "managed": "True",
+        "ordering": "['turn_number', 'id']"
+      },
+      "methods": [],
+      "name": "BattleTurn",
+      "proxy": false,
+      "relationships": {
+        "battle": {
+          "app_label": "battles",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": true,
+          "name": "battle",
+          "null": false,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "battles.Battle",
+          "related_name": null,
+          "table_name": "battles",
+          "type": "ForeignKey",
+          "verbose_name": "Battle"
+        },
+        "player": {
+          "app_label": "players",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": true,
+          "name": "player",
+          "null": false,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "players.Player",
+          "related_name": null,
+          "table_name": "players",
+          "type": "ForeignKey",
+          "verbose_name": "Player"
+        }
+      },
+      "table_name": "battle_turns",
+      "verbose_name": "Battle Turn",
+      "verbose_name_plural": "Battle Turns"
+    }
+  },
+  "players": {
+    "Player": {
+      "abstract": false,
+      "app_label": "players",
+      "column_fields": {
+        "active_pokemon": {
+          "blank": true,
+          "choices": [],
+          "db_index": true,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "The active Pokemon for battles",
+          "name": "active_pokemon",
+          "null": true,
+          "primary_key": false,
+          "type": "ForeignKey",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "active pokemon"
+        },
+        "created_at": {
+          "blank": true,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": false,
+          "field_specific": {
+            "auto_now_add": true
+          },
+          "help_text": "When the player account was created",
+          "name": "created_at",
+          "null": false,
+          "primary_key": false,
+          "type": "DateTimeField",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "created at"
+        },
+        "id": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "<callable: uuid7>",
+          "editable": false,
+          "field_specific": {
+            "max_length": 32
+          },
+          "help_text": "UUIDv7 primary key (time-sortable)",
+          "name": "id",
+          "null": false,
+          "primary_key": true,
+          "type": "UUIDField",
+          "unique": true,
+          "validators": [],
+          "verbose_name": "id"
+        },
+        "is_active": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "True",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Whether this player account is active",
+          "name": "is_active",
+          "null": false,
+          "primary_key": false,
+          "type": "BooleanField",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "is active"
+        },
+        "is_staff": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "False",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Whether the player can access the admin site",
+          "name": "is_staff",
+          "null": false,
+          "primary_key": false,
+          "type": "BooleanField",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "is staff"
+        },
+        "is_superuser": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "False",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Designates that this user has all permissions without explicitly assigning them.",
+          "name": "is_superuser",
+          "null": false,
+          "primary_key": false,
+          "type": "BooleanField",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "superuser status"
+        },
+        "last_login": {
+          "blank": true,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "",
+          "name": "last_login",
+          "null": true,
+          "primary_key": false,
+          "type": "DateTimeField",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "last login"
+        },
+        "losses": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "0",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Total number of battles lost",
+          "name": "losses",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "losses"
+        },
+        "password": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {
+            "max_length": 128
+          },
+          "help_text": "",
+          "name": "password",
+          "null": false,
+          "primary_key": false,
+          "type": "CharField",
+          "unique": false,
+          "validators": [
+            "MaxLengthValidator"
+          ],
+          "verbose_name": "password"
+        },
+        "username": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {
+            "max_length": 150
+          },
+          "help_text": "Required. 150 characters or fewer.",
+          "name": "username",
+          "null": false,
+          "primary_key": false,
+          "type": "CharField",
+          "unique": true,
+          "validators": [
+            "MaxLengthValidator"
+          ],
+          "verbose_name": "username"
+        },
+        "wins": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "0",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Total number of battles won",
+          "name": "wins",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "wins"
+        }
+      },
+      "description": "",
+      "meta_options": {
+        "default_permissions": "('add', 'change', 'delete', 'view')",
+        "indexes": "[<Index: fields=['-wins', 'losses'] name='player_scoreboard_idx'>]",
+        "managed": "True",
+        "ordering": "['-id']"
+      },
+      "methods": [],
+      "name": "Player",
+      "proxy": false,
+      "relationships": {
+        "active_pokemon": {
+          "app_label": "pokemon",
+          "blank": true,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": true,
+          "name": "active_pokemon",
+          "null": true,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "pokemon.PlayerPokemon",
+          "related_name": null,
+          "table_name": "player_pokemon",
+          "type": "ForeignKey",
+          "verbose_name": "Player Pokemon"
+        },
+        "battle_turns": {
+          "app_label": "battles",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": false,
+          "name": "battle_turns",
+          "null": true,
+          "on_delete": "CASCADE",
+          "one_to_many": true,
+          "one_to_one": false,
+          "related_model": "battles.BattleTurn",
+          "related_name": "battle_turns",
+          "table_name": "battle_turns",
+          "type": "ManyToOneRel",
+          "verbose_name": "Battle Turn"
+        },
+        "battles_as_player1": {
+          "app_label": "battles",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": false,
+          "name": "battles_as_player1",
+          "null": true,
+          "on_delete": "CASCADE",
+          "one_to_many": true,
+          "one_to_one": false,
+          "related_model": "battles.Battle",
+          "related_name": "battles_as_player1",
+          "table_name": "battles",
+          "type": "ManyToOneRel",
+          "verbose_name": "Battle"
+        },
+        "battles_as_player2": {
+          "app_label": "battles",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": false,
+          "name": "battles_as_player2",
+          "null": true,
+          "on_delete": "CASCADE",
+          "one_to_many": true,
+          "one_to_one": false,
+          "related_model": "battles.Battle",
+          "related_name": "battles_as_player2",
+          "table_name": "battles",
+          "type": "ManyToOneRel",
+          "verbose_name": "Battle"
+        },
+        "current_turn_battles": {
+          "app_label": "battles",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": false,
+          "name": "current_turn_battles",
+          "null": true,
+          "on_delete": "CASCADE",
+          "one_to_many": true,
+          "one_to_one": false,
+          "related_model": "battles.Battle",
+          "related_name": "current_turn_battles",
+          "table_name": "battles",
+          "type": "ManyToOneRel",
+          "verbose_name": "Battle"
+        },
+        "groups": {
+          "app_label": "auth",
+          "blank": true,
+          "is_generic": false,
+          "many_to_many": true,
+          "many_to_one": false,
+          "name": "groups",
+          "null": false,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "auth.Group",
+          "related_name": null,
+          "table_name": "auth_group",
+          "type": "ManyToManyField",
+          "verbose_name": "group"
+        },
+        "player_pokemon": {
+          "app_label": "pokemon",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": false,
+          "name": "player_pokemon",
+          "null": true,
+          "on_delete": "CASCADE",
+          "one_to_many": true,
+          "one_to_one": false,
+          "related_model": "pokemon.PlayerPokemon",
+          "related_name": "player_pokemon",
+          "table_name": "player_pokemon",
+          "type": "ManyToOneRel",
+          "verbose_name": "Player Pokemon"
+        },
+        "pokemons": {
+          "app_label": "pokemon",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": true,
+          "many_to_one": false,
+          "name": "pokemons",
+          "null": true,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "pokemon.Pokemon",
+          "related_name": "pokemons",
+          "table_name": "pokemon",
+          "type": "ManyToManyRel",
+          "verbose_name": "Pokemon"
+        },
+        "user_permissions": {
+          "app_label": "auth",
+          "blank": true,
+          "is_generic": false,
+          "many_to_many": true,
+          "many_to_one": false,
+          "name": "user_permissions",
+          "null": false,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "auth.Permission",
+          "related_name": null,
+          "table_name": "auth_permission",
+          "type": "ManyToManyField",
+          "verbose_name": "permission"
+        },
+        "won_battles": {
+          "app_label": "battles",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": false,
+          "name": "won_battles",
+          "null": true,
+          "on_delete": "SET_NULL",
+          "one_to_many": true,
+          "one_to_one": false,
+          "related_model": "battles.Battle",
+          "related_name": "won_battles",
+          "table_name": "battles",
+          "type": "ManyToOneRel",
+          "verbose_name": "Battle"
+        }
+      },
+      "table_name": "players",
+      "verbose_name": "Player",
+      "verbose_name_plural": "Players"
+    }
+  },
+  "pokemon": {
+    "PlayerPokemon": {
+      "abstract": false,
+      "app_label": "pokemon",
+      "column_fields": {
+        "created_at": {
+          "blank": true,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": false,
+          "field_specific": {
+            "auto_now_add": true
+          },
+          "help_text": "When the player obtained this Pokemon",
+          "name": "created_at",
+          "null": false,
+          "primary_key": false,
+          "type": "DateTimeField",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "created at"
+        },
+        "deleted_at": {
+          "blank": true,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "When this Pokemon was removed from the team",
+          "name": "deleted_at",
+          "null": true,
+          "primary_key": false,
+          "type": "DateTimeField",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "deleted at"
+        },
+        "id": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "<callable: uuid7>",
+          "editable": false,
+          "field_specific": {
+            "max_length": 32
+          },
+          "help_text": "UUIDv7 primary key (time-sortable)",
+          "name": "id",
+          "null": false,
+          "primary_key": true,
+          "type": "UUIDField",
+          "unique": true,
+          "validators": [],
+          "verbose_name": "id"
+        },
+        "player": {
+          "blank": false,
+          "choices": [],
+          "db_index": true,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "The player who owns this Pokemon",
+          "name": "player",
+          "null": false,
+          "primary_key": false,
+          "type": "ForeignKey",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "player"
+        },
+        "pokemon": {
+          "blank": false,
+          "choices": [],
+          "db_index": true,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "The Pokemon owned by the player",
+          "name": "pokemon",
+          "null": false,
+          "primary_key": false,
+          "type": "ForeignKey",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "pokemon"
+        }
+      },
+      "description": "",
+      "meta_options": {
+        "constraints": "[<UniqueConstraint: fields=('player', 'pokemon') name='unique_player_pokemon'>]",
+        "default_permissions": "('add', 'change', 'delete', 'view')",
+        "managed": "True",
+        "ordering": "['-id']"
+      },
+      "methods": [],
+      "name": "PlayerPokemon",
+      "proxy": false,
+      "relationships": {
+        "active_for_players": {
+          "app_label": "players",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": false,
+          "name": "active_for_players",
+          "null": true,
+          "on_delete": "SET_NULL",
+          "one_to_many": true,
+          "one_to_one": false,
+          "related_model": "players.Player",
+          "related_name": "active_for_players",
+          "table_name": "players",
+          "type": "ManyToOneRel",
+          "verbose_name": "Player"
+        },
+        "player": {
+          "app_label": "players",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": true,
+          "name": "player",
+          "null": false,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "players.Player",
+          "related_name": null,
+          "table_name": "players",
+          "type": "ForeignKey",
+          "verbose_name": "Player"
+        },
+        "pokemon": {
+          "app_label": "pokemon",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": true,
+          "name": "pokemon",
+          "null": false,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "pokemon.Pokemon",
+          "related_name": null,
+          "table_name": "pokemon",
+          "type": "ForeignKey",
+          "verbose_name": "Pokemon"
+        }
+      },
+      "table_name": "player_pokemon",
+      "verbose_name": "Player Pokemon",
+      "verbose_name_plural": "Player Pokemon"
+    },
+    "Pokemon": {
+      "abstract": false,
+      "app_label": "pokemon",
+      "column_fields": {
+        "base_attack": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Base Attack stat",
+          "name": "base_attack",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "base attack"
+        },
+        "base_defense": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Base Defense stat",
+          "name": "base_defense",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "base defense"
+        },
+        "base_hp": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Base HP stat",
+          "name": "base_hp",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "base hp"
+        },
+        "base_speed": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Base Speed stat",
+          "name": "base_speed",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": false,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "base speed"
+        },
+        "created_at": {
+          "blank": true,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": false,
+          "field_specific": {
+            "auto_now_add": true
+          },
+          "help_text": "When this Pokemon was added to the database",
+          "name": "created_at",
+          "null": false,
+          "primary_key": false,
+          "type": "DateTimeField",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "created at"
+        },
+        "id": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "<callable: uuid7>",
+          "editable": false,
+          "field_specific": {
+            "max_length": 32
+          },
+          "help_text": "UUIDv7 primary key (time-sortable)",
+          "name": "id",
+          "null": false,
+          "primary_key": true,
+          "type": "UUIDField",
+          "unique": true,
+          "validators": [],
+          "verbose_name": "id"
+        },
+        "name": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {
+            "max_length": 100
+          },
+          "help_text": "Pokemon name",
+          "name": "name",
+          "null": false,
+          "primary_key": false,
+          "type": "CharField",
+          "unique": true,
+          "validators": [
+            "MaxLengthValidator"
+          ],
+          "verbose_name": "name"
+        },
+        "pokedex_number": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "National Pokedex number",
+          "name": "pokedex_number",
+          "null": false,
+          "primary_key": false,
+          "type": "PositiveIntegerField",
+          "unique": true,
+          "validators": [
+            "MinValueValidator",
+            "MaxValueValidator"
+          ],
+          "verbose_name": "pokedex number"
+        },
+        "primary_type": {
+          "blank": false,
+          "choices": [],
+          "db_index": true,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Primary Pokemon type",
+          "name": "primary_type",
+          "null": false,
+          "primary_key": false,
+          "type": "ForeignKey",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "primary type"
+        },
+        "secondary_type": {
+          "blank": true,
+          "choices": [],
+          "db_index": true,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Secondary Pokemon type (optional)",
+          "name": "secondary_type",
+          "null": true,
+          "primary_key": false,
+          "type": "ForeignKey",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "secondary type"
+        },
+        "sprite_url": {
+          "blank": true,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {
+            "max_length": 500
+          },
+          "help_text": "URL to Pokemon sprite image",
+          "name": "sprite_url",
+          "null": false,
+          "primary_key": false,
+          "type": "URLField",
+          "unique": false,
+          "validators": [
+            "URLValidator",
+            "MaxLengthValidator"
+          ],
+          "verbose_name": "sprite url"
+        }
+      },
+      "description": "",
+      "meta_options": {
+        "default_permissions": "('add', 'change', 'delete', 'view')",
+        "managed": "True"
+      },
+      "methods": [],
+      "name": "Pokemon",
+      "proxy": false,
+      "relationships": {
+        "player_pokemon": {
+          "app_label": "pokemon",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": false,
+          "name": "player_pokemon",
+          "null": true,
+          "on_delete": "CASCADE",
+          "one_to_many": true,
+          "one_to_one": false,
+          "related_model": "pokemon.PlayerPokemon",
+          "related_name": "player_pokemon",
+          "table_name": "player_pokemon",
+          "type": "ManyToOneRel",
+          "verbose_name": "Player Pokemon"
+        },
+        "players": {
+          "app_label": "players",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": true,
+          "many_to_one": false,
+          "name": "players",
+          "null": false,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "players.Player",
+          "related_name": null,
+          "table_name": "players",
+          "type": "ManyToManyField",
+          "verbose_name": "Player"
+        },
+        "primary_type": {
+          "app_label": "pokemon",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": true,
+          "name": "primary_type",
+          "null": false,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "pokemon.PokemonType",
+          "related_name": null,
+          "table_name": "pokemon_types",
+          "type": "ForeignKey",
+          "verbose_name": "Pokemon Type"
+        },
+        "secondary_type": {
+          "app_label": "pokemon",
+          "blank": true,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": true,
+          "name": "secondary_type",
+          "null": true,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "pokemon.PokemonType",
+          "related_name": null,
+          "table_name": "pokemon_types",
+          "type": "ForeignKey",
+          "verbose_name": "Pokemon Type"
+        }
+      },
+      "table_name": "pokemon",
+      "verbose_name": "Pokemon",
+      "verbose_name_plural": "Pokemon"
+    },
+    "PokemonType": {
+      "abstract": false,
+      "app_label": "pokemon",
+      "column_fields": {
+        "id": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "<callable: uuid7>",
+          "editable": false,
+          "field_specific": {
+            "max_length": 32
+          },
+          "help_text": "UUIDv7 primary key (time-sortable)",
+          "name": "id",
+          "null": false,
+          "primary_key": true,
+          "type": "UUIDField",
+          "unique": true,
+          "validators": [],
+          "verbose_name": "id"
+        },
+        "name": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": null,
+          "editable": true,
+          "field_specific": {
+            "max_length": 50
+          },
+          "help_text": "Pokemon type name (e.g., fire, water, grass)",
+          "name": "name",
+          "null": false,
+          "primary_key": false,
+          "type": "CharField",
+          "unique": true,
+          "validators": [
+            "MaxLengthValidator"
+          ],
+          "verbose_name": "name"
+        }
+      },
+      "description": "",
+      "meta_options": {
+        "default_permissions": "('add', 'change', 'delete', 'view')",
+        "managed": "True",
+        "ordering": "['name']"
+      },
+      "methods": [],
+      "name": "PokemonType",
+      "proxy": false,
+      "relationships": {
+        "attacking_effectiveness": {
+          "app_label": "pokemon",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": false,
+          "name": "attacking_effectiveness",
+          "null": true,
+          "on_delete": "CASCADE",
+          "one_to_many": true,
+          "one_to_one": false,
+          "related_model": "pokemon.TypeEffectiveness",
+          "related_name": "attacking_effectiveness",
+          "table_name": "type_effectiveness",
+          "type": "ManyToOneRel",
+          "verbose_name": "Type Effectiveness"
+        },
+        "defending_effectiveness": {
+          "app_label": "pokemon",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": false,
+          "name": "defending_effectiveness",
+          "null": true,
+          "on_delete": "CASCADE",
+          "one_to_many": true,
+          "one_to_one": false,
+          "related_model": "pokemon.TypeEffectiveness",
+          "related_name": "defending_effectiveness",
+          "table_name": "type_effectiveness",
+          "type": "ManyToOneRel",
+          "verbose_name": "Type Effectiveness"
+        },
+        "pokemon_primary": {
+          "app_label": "pokemon",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": false,
+          "name": "pokemon_primary",
+          "null": true,
+          "on_delete": "PROTECT",
+          "one_to_many": true,
+          "one_to_one": false,
+          "related_model": "pokemon.Pokemon",
+          "related_name": "pokemon_primary",
+          "table_name": "pokemon",
+          "type": "ManyToOneRel",
+          "verbose_name": "Pokemon"
+        },
+        "pokemon_secondary": {
+          "app_label": "pokemon",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": false,
+          "name": "pokemon_secondary",
+          "null": true,
+          "on_delete": "PROTECT",
+          "one_to_many": true,
+          "one_to_one": false,
+          "related_model": "pokemon.Pokemon",
+          "related_name": "pokemon_secondary",
+          "table_name": "pokemon",
+          "type": "ManyToOneRel",
+          "verbose_name": "Pokemon"
+        }
+      },
+      "table_name": "pokemon_types",
+      "verbose_name": "Pokemon Type",
+      "verbose_name_plural": "Pokemon Types"
+    },
+    "TypeEffectiveness": {
+      "abstract": false,
+      "app_label": "pokemon",
+      "column_fields": {
+        "attacker_type": {
+          "blank": false,
+          "choices": [],
+          "db_index": true,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "The attacking Pokemon's type",
+          "name": "attacker_type",
+          "null": false,
+          "primary_key": false,
+          "type": "ForeignKey",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "attacker type"
+        },
+        "defender_type": {
+          "blank": false,
+          "choices": [],
+          "db_index": true,
+          "default": null,
+          "editable": true,
+          "field_specific": {},
+          "help_text": "The defending Pokemon's type",
+          "name": "defender_type",
+          "null": false,
+          "primary_key": false,
+          "type": "ForeignKey",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "defender type"
+        },
+        "id": {
+          "blank": false,
+          "choices": [],
+          "db_index": false,
+          "default": "<callable: uuid7>",
+          "editable": false,
+          "field_specific": {
+            "max_length": 32
+          },
+          "help_text": "UUIDv7 primary key (time-sortable)",
+          "name": "id",
+          "null": false,
+          "primary_key": true,
+          "type": "UUIDField",
+          "unique": true,
+          "validators": [],
+          "verbose_name": "id"
+        },
+        "multiplier": {
+          "blank": false,
+          "choices": [
+            {
+              "display": "Super Effective (2x)",
+              "value": 2.0
+            },
+            {
+              "display": "Normal (1x)",
+              "value": 1.0
+            },
+            {
+              "display": "Not Very Effective (0.5x)",
+              "value": 0.5
+            },
+            {
+              "display": "No Effect (0x)",
+              "value": 0.0
+            }
+          ],
+          "db_index": false,
+          "default": "1.0",
+          "editable": true,
+          "field_specific": {},
+          "help_text": "Damage multiplier: 2.0=super effective, 0.5=not very effective, 0=no effect",
+          "name": "multiplier",
+          "null": false,
+          "primary_key": false,
+          "type": "FloatField",
+          "unique": false,
+          "validators": [],
+          "verbose_name": "multiplier"
+        }
+      },
+      "description": "",
+      "meta_options": {
+        "constraints": "[<UniqueConstraint: fields=('attacker_type', 'defender_type') name='unique_type_matchup'>]",
+        "default_permissions": "('add', 'change', 'delete', 'view')",
+        "managed": "True"
+      },
+      "methods": [],
+      "name": "TypeEffectiveness",
+      "proxy": false,
+      "relationships": {
+        "attacker_type": {
+          "app_label": "pokemon",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": true,
+          "name": "attacker_type",
+          "null": false,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "pokemon.PokemonType",
+          "related_name": null,
+          "table_name": "pokemon_types",
+          "type": "ForeignKey",
+          "verbose_name": "Pokemon Type"
+        },
+        "defender_type": {
+          "app_label": "pokemon",
+          "blank": false,
+          "is_generic": false,
+          "many_to_many": false,
+          "many_to_one": true,
+          "name": "defender_type",
+          "null": false,
+          "on_delete": null,
+          "one_to_many": false,
+          "one_to_one": false,
+          "related_model": "pokemon.PokemonType",
+          "related_name": null,
+          "table_name": "pokemon_types",
+          "type": "ForeignKey",
+          "verbose_name": "Pokemon Type"
+        }
+      },
+      "table_name": "type_effectiveness",
+      "verbose_name": "Type Effectiveness",
+      "verbose_name_plural": "Type Effectivenesses"
+    }
+  }
+}
