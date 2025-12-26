@@ -463,6 +463,7 @@
         "name": "type",
         "in": "query",
         "description": "Filter Pokemon by type name (matches primary or secondary type)",
+        "required": false,
         "schema": { "type": "string", "example": "fire" },
         "queryparam_type": "filter_fields"
       },
@@ -470,6 +471,7 @@
         "name": "page",
         "in": "query",
         "description": "Page number to retrieve",
+        "required": false,
         "schema": { "type": "integer", "example": 1 },
         "queryparam_type": "pagination_fields"
       },
@@ -477,6 +479,7 @@
         "name": "page_size",
         "in": "query",
         "description": "Number of items per page",
+        "required": false,
         "schema": { "type": "integer", "example": 20 },
         "queryparam_type": "pagination_fields"
       }
@@ -753,6 +756,7 @@
         "name": "attacker",
         "in": "query",
         "description": "Filter by attacker type name",
+        "required": false,
         "schema": { "type": "string", "example": "fire" },
         "queryparam_type": "filter_fields"
       },
@@ -760,6 +764,7 @@
         "name": "defender",
         "in": "query",
         "description": "Filter by defender type name",
+        "required": false,
         "schema": { "type": "string", "example": "grass" },
         "queryparam_type": "filter_fields"
       }
@@ -812,6 +817,7 @@
         "name": "offset",
         "in": "query",
         "description": "Starting index for pagination (default: 0)",
+        "required": false,
         "schema": { "type": "integer", "example": 0, "default": 0 },
         "queryparam_type": "pagination_fields"
       },
@@ -819,6 +825,7 @@
         "name": "limit",
         "in": "query",
         "description": "Number of results to return (default: 20, max: 50)",
+        "required": false,
         "schema": { "type": "integer", "example": 20, "default": 20, "maximum": 50 },
         "queryparam_type": "pagination_fields"
       }
@@ -1038,6 +1045,7 @@
         "name": "page",
         "in": "query",
         "description": "Page number to retrieve",
+        "required": false,
         "schema": { "type": "integer", "example": 1 },
         "queryparam_type": "pagination_fields"
       },
@@ -1045,6 +1053,7 @@
         "name": "page_size",
         "in": "query",
         "description": "Number of items per page",
+        "required": false,
         "schema": { "type": "integer", "example": 20 },
         "queryparam_type": "pagination_fields"
       }
@@ -1630,6 +1639,7 @@
         "name": "page",
         "in": "query",
         "description": "Page number to retrieve",
+        "required": false,
         "schema": { "type": "integer", "example": 1 },
         "queryparam_type": "pagination_fields"
       },
@@ -1637,6 +1647,7 @@
         "name": "page_size",
         "in": "query",
         "description": "Number of items per page",
+        "required": false,
         "schema": { "type": "integer", "example": 20 },
         "queryparam_type": "pagination_fields"
       }
@@ -1922,6 +1933,7 @@
         "name": "page",
         "in": "query",
         "description": "Page number to retrieve",
+        "required": false,
         "schema": { "type": "integer", "example": 1 },
         "queryparam_type": "pagination_fields"
       },
@@ -1929,6 +1941,7 @@
         "name": "page_size",
         "in": "query",
         "description": "Number of items per page",
+        "required": false,
         "schema": { "type": "integer", "example": 20 },
         "queryparam_type": "pagination_fields"
       }
