@@ -11,59 +11,32 @@ jobs:
   build-docs:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:17
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: pokemon_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install UV
-        uses: astral-sh/setup-uv@v4
-        with:
-          version: "latest"
-
       - name: Set up Python
-        run: uv python install 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
       - name: Install dependencies
         working-directory: ./backend
         run: |
-          uv sync --frozen
-
-      - name: Run migrations
-        working-directory: ./backend
-        env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/pokemon_test
-          DJANGO_SECRET_KEY: test-secret-key-for-ci
-          DEBUG: 'true'
-        run: |
-          uv run python manage.py migrate
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
       - name: Build documentation
         working-directory: ./backend
         env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/pokemon_test
           DJANGO_SECRET_KEY: test-secret-key-for-ci
           DEBUG: 'true'
         run: |
-          uv run python manage.py build_docs
+          python manage.py build_docs
 
       - name: Build MkDocs site
         working-directory: ./backend
         run: |
-          uv run mkdocs build --site-dir ../site
+          mkdocs build --site-dir ../site
 
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
