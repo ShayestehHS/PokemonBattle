@@ -10,6 +10,8 @@ on:
 jobs:
   build-docs:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -37,6 +39,10 @@ jobs:
         working-directory: ./backend
         run: |
           mkdocs build --site-dir ../site
+
+      - name: Verify site directory exists
+        run: |
+          ls -la site/ || echo "Site directory not found"
 
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
